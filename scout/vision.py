@@ -22,6 +22,7 @@ import base64
 import io
 import json
 import logging
+from typing import Any
 
 import httpx
 
@@ -53,10 +54,16 @@ Reply with JSON only, matching exactly this shape:
 
 
 class VisionScorer:
-    def __init__(self, model: str | None = None, api_key: str | None = None) -> None:
-        config = get_config()
-        self.model = model or config.openai_model
-        self.api_key = api_key or config.openai_api_key
+    def __init__(
+        self,
+        model: str | None = None,
+        api_key: str | None = None,
+        settings: Any = None,
+    ) -> None:
+        # The UI-editable setting outranks .env; explicit arguments outrank both.
+        creds = get_config().resolve(settings)
+        self.model = model or creds.openai_model
+        self.api_key = api_key or creds.openai_api_key
         self._client = None
 
     @property

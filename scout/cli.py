@@ -44,11 +44,16 @@ def init() -> None:
     with connect() as conn:
         criteria = load_criteria(conn)
         save_criteria(conn, criteria)
-        save_settings(conn, load_settings(conn))
+        settings = load_settings(conn)
+        save_settings(conn, settings)
     config = get_config()
+    # Report what the app will actually use, i.e. after the Settings page has
+    # been merged over .env - not just what .env happens to hold.
+    creds = config.resolve(settings)
     console.print(f"[green]database ready[/] at {config.db_path}")
-    console.print(f"  OpenAI configured: {'yes' if config.has_openai else 'no'}")
-    console.print(f"  SMTP configured:   {'yes' if config.has_smtp else 'no'}")
+    console.print(f"  OpenAI configured: {'yes' if creds.has_openai else 'no'}")
+    console.print(f"  SMTP configured:   {'yes' if creds.has_smtp else 'no'}")
+    console.print(f"  IMAP configured:   {'yes' if creds.has_imap else 'no'}")
 
 
 @app.command()
@@ -170,7 +175,9 @@ def digest(
         console.print(f"[green]{subject}[/]\nwrote {out} ({len(items)} listings)")
         return
 
-    EmailSender().send(settings.recipients, subject, html, render_text(items))
+    EmailSender(get_config().resolve(settings)).send(
+        settings.recipients, subject, html, render_text(items)
+    )
     with connect() as conn:
         for item in items:
             store.mark_notified(conn, item["id"], "digest", item["score"])

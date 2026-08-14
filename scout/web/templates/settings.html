@@ -2,9 +2,9 @@
 {% block content %}
 <h1>Settings</h1>
 <p class="sub">
-  Secrets (OpenAI key, SMTP password) live in <code>.env</code>, not here.
-  OpenAI: {% if has_openai %}<span class="ok-dot">configured</span>{% else %}<span class="bad-dot">missing</span>{% endif %} ·
-  SMTP: {% if has_smtp %}<span class="ok-dot">configured</span>{% else %}<span class="bad-dot">missing</span>{% endif %} ·
+  OpenAI: {% if creds.has_openai %}<span class="ok-dot">configured</span>{% else %}<span class="bad-dot">missing</span>{% endif %} ·
+  SMTP: {% if creds.has_smtp %}<span class="ok-dot">configured</span>{% else %}<span class="bad-dot">missing</span>{% endif %} ·
+  IMAP: {% if creds.has_imap %}<span class="ok-dot">configured</span>{% else %}<span class="bad-dot">missing</span>{% endif %} ·
   database <code>{{ db_path }}</code>
 </p>
 
@@ -17,9 +17,13 @@
     {% endfor %}
   </div>
   <p class="hint">
-    Flatfox and ImmoScout24 are verified working. Homegate, Newhome and Comparis
-    need a headed browser and may report “blocked” — see the Runs page for what
-    each source actually did.
+    <strong>flatfox</strong> is a plain JSON API and always works.
+    <strong>mailbox</strong> reads saved-search alert emails over IMAP — set the
+    searches up on each portal by hand, point their alerts at the mailbox in
+    <code>.env</code>, and their listings arrive without a browser.
+    The rest (homegate, immoscout, newhome, comparis) are behind DataDome or
+    Cloudflare: they need a headed browser, launch one per run, and mostly report
+    “blocked”. See the Runs page for what each source actually did.
   </p>
 
   <h2>Schedule</h2>
@@ -54,6 +58,85 @@
   <p class="hint">
     Only the top-ranked unseen listings are photographed, and each result is
     cached forever — cost tracks new listings, not catalogue size.
+  </p>
+
+  {# ---- credentials ---------------------------------------------------- #}
+  {% macro secret(field, label, placeholder='') %}
+    {% set state = secret_state[field] %}
+    <label>
+      <span>{{ label }}</span>
+      <input type="password" name="{{ field }}" autocomplete="new-password" spellcheck="false"
+             placeholder="{{ state.hint or placeholder }}">
+      <small class="hint">
+        {% if state.stored_here %}
+          Saved here. <button type="submit" name="clear_{{ field }}" value="1" class="linklike">Clear</button>
+          {%- if state.in_env %} to fall back to <code>.env</code>{% endif %}.
+        {% elif state.in_env %}
+          Using the value from <code>.env</code>. Type here to override it.
+        {% else %}
+          Not set.
+        {% endif %}
+      </small>
+    </label>
+  {% endmacro %}
+
+  {% macro tristate(field, label) %}
+    <label>
+      <span>{{ label }}</span>
+      <select name="{{ field }}">
+        <option value="" {% if settings[field] is none %}selected{% endif %}>from .env</option>
+        <option value="true" {% if settings[field] is true %}selected{% endif %}>on</option>
+        <option value="false" {% if settings[field] is false %}selected{% endif %}>off</option>
+      </select>
+    </label>
+  {% endmacro %}
+
+  <h2>Credentials</h2>
+  <p class="hint">
+    Anything left blank falls back to the matching variable in <code>.env</code>.
+    Saved passwords are never shown again — only their last four characters.
+    They are stored in plain text in <code>{{ db_path }}</code>, so keep that file
+    to yourself; <code>scout init</code> gives it owner-only permissions.
+  </p>
+
+  <h3>OpenAI</h3>
+  <div class="fields">
+    {{ secret('openai_api_key', 'API key', 'sk-…') }}
+    <label>
+      <span>Model</span>
+      <input type="text" name="openai_model" value="{{ settings.openai_model }}"
+             placeholder="{{ env.openai_model }}">
+    </label>
+  </div>
+
+  <h3>Sending email (SMTP)</h3>
+  <div class="fields">
+    <label><span>Host</span><input type="text" name="smtp_host" value="{{ settings.smtp_host }}" placeholder="{{ env.smtp_host or 'smtp.gmail.com' }}"></label>
+    <label><span>Port</span><input type="number" name="smtp_port" value="{{ settings.smtp_port if settings.smtp_port is not none }}" placeholder="{{ env.smtp_port }}"></label>
+    <label><span>Username</span><input type="text" name="smtp_user" value="{{ settings.smtp_user }}" autocomplete="off" placeholder="{{ env.smtp_user }}"></label>
+    {{ secret('smtp_password', 'Password') }}
+    <label><span>From address</span><input type="text" name="smtp_from" value="{{ settings.smtp_from }}" placeholder="{{ creds.mail_from or 'defaults to the username' }}"></label>
+    {{ tristate('smtp_starttls', 'STARTTLS') }}
+  </div>
+  <p class="hint">
+    Gmail rejects your normal password — create an
+    <a href="https://myaccount.google.com/apppasswords">App Password</a> and use
+    that. A wrong one shows up as <code>535 5.7.8 Username and Password not
+    accepted</code> on the Runs page.
+  </p>
+
+  <h3>Reading alert emails (IMAP)</h3>
+  <div class="fields">
+    <label><span>Host</span><input type="text" name="imap_host" value="{{ settings.imap_host }}" placeholder="{{ env.imap_host or 'imap.gmail.com' }}"></label>
+    <label><span>Port</span><input type="number" name="imap_port" value="{{ settings.imap_port if settings.imap_port is not none }}" placeholder="{{ env.imap_port }}"></label>
+    <label><span>Username</span><input type="text" name="imap_user" value="{{ settings.imap_user }}" autocomplete="off" placeholder="{{ env.imap_user }}"></label>
+    {{ secret('imap_password', 'Password') }}
+    <label><span>Folder</span><input type="text" name="imap_folder" value="{{ settings.imap_folder }}" placeholder="{{ env.imap_folder }}"></label>
+    {{ tristate('imap_ssl', 'SSL') }}
+  </div>
+  <p class="hint">
+    Feeds the <strong>mailbox</strong> source above. Mail is only ever read —
+    never deleted, moved, or marked seen.
   </p>
 
   <h2>Limits</h2>

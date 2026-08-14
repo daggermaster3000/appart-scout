@@ -193,9 +193,12 @@ class Criteria(BaseModel):
 class Settings(BaseModel):
     """Operational knobs, also editable in the web UI."""
 
-    enabled_sources: list[str] = Field(
-        default_factory=lambda: ["flatfox", "homegate", "immoscout", "newhome", "comparis"]
-    )
+    # Flatfox only by default. The other four portals sit behind DataDome or
+    # Cloudflare: every one of them refuses a plain HTTP client outright, and
+    # only sometimes lets a headed Chromium through. Enabling them costs a
+    # browser launch per run and usually returns nothing, so they are opt-in.
+    # Their inventory comes in through the `mailbox` source instead.
+    enabled_sources: list[str] = Field(default_factory=lambda: ["flatfox"])
     #: how often to scrape. Separate from the digest cadence: scraping often
     #: catches new listings early (and feeds instant alerts) without burying
     #: anyone in email.
@@ -209,6 +212,31 @@ class Settings(BaseModel):
     vision_enabled: bool = True
     vision_top_n: int = 10
     vision_max_photos: int = 4
+
+    # --- credentials -------------------------------------------------------
+    # All of these are editable in the web UI so that changing a password does
+    # not mean SSHing to the Pi, editing .env and restarting the unit. Every one
+    # of them is optional here: blank (or None) means "fall back to the matching
+    # variable in .env". See `config.Config.resolve`, which merges the two, and
+    # the Settings page, which never renders a stored secret back.
+    openai_api_key: str = ""
+    openai_model: str = ""
+
+    smtp_host: str = ""
+    smtp_port: int | None = None
+    smtp_user: str = ""
+    smtp_password: str = ""
+    # Tri-state on purpose: None means "whatever .env says", so a checkbox
+    # (which submits nothing when unchecked) would be lossy here.
+    smtp_starttls: bool | None = None
+    smtp_from: str = ""
+
+    imap_host: str = ""
+    imap_port: int | None = None
+    imap_user: str = ""
+    imap_password: str = ""
+    imap_folder: str = ""
+    imap_ssl: bool | None = None
 
     instant_alert_enabled: bool = True
     instant_alert_min_score: float = 85.0

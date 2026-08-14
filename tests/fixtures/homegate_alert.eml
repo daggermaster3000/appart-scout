@@ -1,0 +1,56 @@
+From: Homegate <noreply@homegate.ch>
+To: you@example.com
+Subject: 3 neue Objekte fuer Ihren Suchauftrag
+Date: Thu, 14 Aug 2026 07:12:03 +0200
+MIME-Version: 1.0
+Content-Type: text/html; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+
+<html><body>
+<table><tr><td>
+  <img src="https://cdn.homegate.ch/assets/logo.png" width="120" height="40" alt="homegate">
+  <p>Es gibt 3 neue Treffer f&uuml;r Ihren Suchauftrag.</p>
+</td></tr></table>
+
+<table class="results">
+  <tr>
+    <td class="card">
+      <a href="https://click.homegate.ch/r?url=https%3A%2F%2Fwww.homegate.ch%2Fmieten%2F4001923847&amp;uid=abc123">
+        <img src="https://media.homegate.ch/listings/4001923847/1_large.jpg" width="300" height="200">
+      </a>
+      <a href="https://click.homegate.ch/r?url=https%3A%2F%2Fwww.homegate.ch%2Fmieten%2F4001923847&amp;uid=abc123">
+        Helle 3.5 Zimmer Wohnung mit Balkon
+      </a>
+      <div>CHF 2'350.&ndash; &middot; 3.5 Zimmer &middot; 88 m&sup2;</div>
+      <div>Bahnhofstrasse 12, 5000 Aarau</div>
+    </td>
+  </tr>
+  <tr>
+    <td class="card">
+      <a href="https://click.homegate.ch/r?url=https%3A%2F%2Fwww.homegate.ch%2Fmieten%2F4001923901&amp;uid=abc123">
+        <img src="https://media.homegate.ch/listings/4001923901/1_large.jpg" width="300" height="200">
+      </a>
+      <a href="https://click.homegate.ch/r?url=https%3A%2F%2Fwww.homegate.ch%2Fmieten%2F4001923901&amp;uid=abc123">
+        4.5 Zimmer Dachwohnung, 2. OG
+      </a>
+      <div>CHF 2'790.&ndash; &middot; 4.5 Zimmer &middot; 112 m&sup2;</div>
+      <div>Sonnenweg 4, 4310 Rheinfelden</div>
+    </td>
+  </tr>
+  <tr>
+    <td class="card">
+      <a href="https://www.homegate.ch/mieten/4002001122">
+        Studio im Zentrum
+      </a>
+      <div>CHF 1'450.&ndash; &middot; 1.5 Zimmer &middot; 34 m&sup2;</div>
+      <div>Steinenvorstadt 7, 4051 Basel</div>
+    </td>
+  </tr>
+</table>
+
+<table><tr><td>
+  <a href="https://www.homegate.ch/account/unsubscribe?token=xyz">Newsletter abbestellen</a>
+  <a href="https://www.homegate.ch/impressum">Impressum</a>
+  <img src="https://track.homegate.ch/open/pixel.gif" width="1" height="1">
+</td></tr></table>
+</body></html>

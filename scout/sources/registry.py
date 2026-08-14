@@ -18,6 +18,7 @@ log = logging.getLogger(__name__)
 #: name -> "module:ClassName"
 SOURCES: dict[str, str] = {
     "flatfox": "scout.sources.flatfox:FlatfoxSource",
+    "mailbox": "scout.sources.mailbox:MailboxSource",
     "homegate": "scout.sources.homegate:HomegateSource",
     "immoscout": "scout.sources.immoscout:ImmoScout24Source",
     "newhome": "scout.sources.newhome:NewhomeSource",

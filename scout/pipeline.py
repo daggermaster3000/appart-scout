@@ -11,6 +11,7 @@ from datetime import datetime, timedelta, timezone
 
 from . import store
 from .browser import BrowserUnavailable, browser_session
+from .config import get_config
 from .db import (
     connect,
     criteria_version,
@@ -206,7 +207,7 @@ async def _rank(conn, criteria: Criteria, settings: Settings, commute, version, 
 
 async def _run_vision(conn, client, criteria, settings, version, commute) -> int:
     """Photo-score the top N candidates that have never been photographed."""
-    scorer = VisionScorer()
+    scorer = VisionScorer(settings=settings)
     if not scorer.available:
         log.info("vision skipped: no OPENAI_API_KEY configured")
         return 0
@@ -237,7 +238,7 @@ async def _run_vision(conn, client, criteria, settings, version, commute) -> int
 
 def _notify(settings: Settings, criteria: Criteria) -> int:
     """Send instant alerts and, when due, the periodic digest."""
-    sender = EmailSender()
+    sender = EmailSender(get_config().resolve(settings))
     if not sender.available:
         log.info("email skipped: SMTP not configured")
         return 0

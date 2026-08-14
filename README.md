@@ -17,25 +17,47 @@ Only some Swiss portals are reachable by software. Measured while building this:
 
 | Portal | How it's fetched | Status |
 |---|---|---|
-| **Flatfox** | public JSON API | **Works.** Verified end-to-end, 3 700+ listings per sync. |
-| **ImmoScout24** | headed Chromium + page hydration state | **Adapter verified against real payloads**, but the site began serving captchas to the development IP. See below. |
-| **Homegate** | headed Chromium | **Blocked** every attempt. Largely redundant — see below. |
-| **Newhome** | headed Chromium + generic parser | Loads in a headed browser; result URL not pinned down. |
-| **Comparis** | headed Chromium + generic parser | Passes the anti-bot layer; result URL not pinned down. |
+| **Flatfox** | public JSON API | **Works.** Verified end-to-end, 3 700+ listings per sync. Enabled by default. |
+| **Any portal, via alert email** | IMAP (`mailbox` source) | **Works, and is the way in to the blocked four.** Needs one-time manual setup. |
+| **ImmoScout24** | headed Chromium + page hydration state | Adapter verified against real payloads, but the site now serves a DataDome captcha. Off by default. |
+| **Homegate** | headed Chromium | Blocked. Largely redundant — see below. Off by default. |
+| **Newhome** | headed Chromium + generic parser | Cloudflare challenge. Off by default. |
+| **Comparis** | headed Chromium + generic parser | DataDome captcha. Off by default. |
 
-Three things worth knowing:
+**Scraping the last four is a dead end, and going "direct to the API" makes it
+worse, not better.** Their JSON endpoints are real and their frontends do call
+them, but every one of them is behind DataDome or Cloudflare and refuses a plain
+HTTP client outright — harder than it refuses a headed Chromium, because there is
+no browser fingerprint or cookie jar to go with the request. Measured directly:
+
+```
+flatfox.ch/api/v1/public-listing/     200   35 500 listings
+api.homegate.ch/search/listings       403   geo.captcha-delivery.com
+www.immoscout24.ch/…                  403   geo.captcha-delivery.com
+www.comparis.ch/immobilien/result     403   geo.captcha-delivery.com
+www.newhome.ch/api/search/list        403   Cloudflare "Just a moment..."
+```
+
+So the default is Flatfox plus the mailbox. Three more things worth knowing:
 
 - **Flatfox alone is a real service.** It covers Zürich and Aargau well, and it
-  is the only source that needs no browser at all.
+  is the only portal that needs no browser and no setup at all.
+- **The blocked portals will send you the same listings by email.** Every one of
+  them offers saved-search alerts. The `mailbox` source reads those over IMAP —
+  no anti-bot layer, nothing to keep working around, and the mail arrives when
+  the listing is posted rather than up to six hours later. See
+  [Alert emails](#alert-emails-the-mailbox-source).
 - **Homegate matters less than it looks.** Homegate and ImmoScout24 are both SMG
   properties; ImmoScout24 listings carry
   `platforms: ["homegate", "immoscout24", …]`, i.e. the same inventory is
   syndicated across both, and `dedup.py` would merge them anyway.
-- **Blocking is per-IP and reputation-based.** ImmoScout24 loaded fine for hours
-  (the test fixtures are real captures from it) and only started refusing after
-  sustained automated traffic from one address. Your Pi on a Swiss residential
-  connection is a different proposition. Run `scout probe immoscout` there to
-  find out — it dumps exactly what the site returned.
+
+The browser adapters are still in the tree and still enableable from the settings
+page — blocking is per-IP and reputation-based, and your Pi on a Swiss
+residential connection is a different proposition from a development machine that
+hammered the site for an afternoon. Run `scout probe immoscout` there to find
+out; it dumps exactly what the site returned. But every run with one enabled
+launches a Chromium, so leave them off unless a probe says otherwise.
 
 Nothing here fakes data. A source that cannot fetch records an error against
 that run and the others carry on; the Runs page shows you which is which.
@@ -47,17 +69,42 @@ that run and the others carry on; the Runs page shows you which is which.
 ```bash
 git clone <your-repo> appart-scout && cd appart-scout
 python3 -m venv .venv
-.venv/bin/pip install -e ".[browser,dev]"
-.venv/bin/playwright install chromium     # skip if using system chromium
+.venv/bin/pip install -e ".[dev]"          # add ",browser" only for the blocked portals
 cp .env.example .env                       # then fill it in
 .venv/bin/scout init
 ```
 
-`.env` holds the only secrets: `OPENAI_API_KEY`, the `SMTP_*` credentials and
-`DIGEST_TO`. Everything else is editable in the web UI.
+Playwright is an optional extra now that the default sources need no browser.
+Install `".[browser,dev]"` and `.venv/bin/playwright install chromium` only if
+you intend to enable ImmoScout24 / Homegate / Newhome / Comparis.
+
+### Credentials
+
+Every credential — the OpenAI key, the `SMTP_*` block for sending, the `IMAP_*`
+block for reading alert mail — can be set in **two** places:
+
+- the **Settings** page, which is the point: changing a password on a headless
+  Pi should not mean SSH, an editor and `systemctl --user restart`;
+- `.env`, which survives a database reset and is the better home for a secret.
+
+**The Settings page wins wherever it is filled in; a blank there falls back to
+`.env`.** So you can use either, or both. Fill in nothing at install time and do
+it all from the UI if you prefer.
+
+The page never displays a stored secret back — only its last four characters, so
+you can tell which key is loaded. Submitting a blank password box keeps the
+stored one rather than erasing it; erasing takes the explicit **Clear** button
+next to the field. Ports and the TLS toggles are three-way: a value, or "from
+.env".
+
+Secrets set in the UI are stored **in plain text** in the SQLite file. Encrypting
+them would need a key, and that key would have to live in `.env` — the file this
+feature exists to avoid touching. So the protection is file permissions instead:
+`scout init` (and every settings save) chmods the database to `0600`. Keep it
+that way, and don't put the database on a shared volume.
 
 For Gmail you need an [App Password](https://myaccount.google.com/apppasswords),
-not your normal password.
+not your normal password — for SMTP and IMAP alike.
 
 ## Run it
 
@@ -73,21 +120,81 @@ Open the UI, set your two workplaces and your budget on **Criteria**, then press
 > 150 lookups and picks the rest up on later runs against a 30-day cache. Expect
 > the commute columns to fill in over the first day, not the first run.
 
+## Alert emails: the `mailbox` source
+
+This is how the blocked portals get in. They will not let you read their
+listings, but they will happily mail them to you.
+
+**One-time setup, by hand:**
+
+1. Pick a mailbox for the alerts. A dedicated address is cleanest; a dedicated
+   folder plus a filter works too. Everything in the configured folder from a
+   recognised portal sender gets parsed, so don't point it at a busy inbox.
+2. On each portal — ImmoScout24, Homegate, Newhome, Comparis — create an account,
+   run the search you want (the corridor, your budget, your room count) and save
+   it as an alert. Set the frequency to immediate/daily. Send it to that mailbox.
+3. Fill in the IMAP host, user, password and folder on the **Settings** page
+   (Gmail: an App Password), or the `IMAP_*` block in `.env`.
+4. Enable **mailbox** in the source list on the same page.
+
+```bash
+.venv/bin/scout run --source mailbox     # check it before trusting the schedule
+```
+
+Mail is only ever read — never deleted, moved, or marked seen. The adapter keeps
+an IMAP UID cursor so each message is parsed once, and re-scans from scratch if
+the server ever renumbers the folder.
+
+**What you get and what you don't.** An alert email carries the link, price,
+rooms, surface and town — enough for every hard filter, and enough for the
+commute lookup, which resolves a town name when there are no coordinates. It
+does not carry structured amenity flags, the year built, or more than one photo,
+so those stay empty and score as unknown rather than absent. Listings that also
+appear on Flatfox get merged by `dedup.py` as usual.
+
+Parsing is generic rather than four hand-written templates: the portals restyle
+their mail regularly, but all of them write `CHF 2'450`, `3.5 Zimmer` and
+`85 m²`. Fields are read out of the text block around each listing link. If a
+portal changes its layout badly enough to break that, the run records it as
+fewer listings, not as wrong ones.
+
 ## On the Raspberry Pi
 
 ```bash
-sudo apt install xvfb chromium
-echo 'SCOUT_CHROMIUM_PATH=/usr/bin/chromium' >> .env   # Playwright's own arm64 build is unreliable
-
 mkdir -p ~/.config/systemd/user
 cp deploy/appart-scout.service ~/.config/systemd/user/
+systemctl --user daemon-reload
 systemctl --user enable --now appart-scout
 systemctl --user status appart-scout
 loginctl enable-linger $USER      # keep it running after you log out
 ```
 
+`enable-linger` is not optional: without it the user unit dies when you log out
+of SSH and never starts at boot.
+
+Day to day — note there is no `sudo`, these are **user** units:
+
+```bash
+systemctl --user restart appart-scout      # after editing .env; it is read at start only
+systemctl --user stop appart-scout
+journalctl --user -u appart-scout -f       # logs
+systemctl --user daemon-reload             # after editing the unit file itself
+```
+
+The unit has `Restart=on-failure`, so a crash comes back by itself after 30 s but
+an explicit `stop` stays stopped.
+
+**Only if you enable the browser sources** do you also need:
+
+```bash
+sudo apt install xvfb chromium
+echo 'SCOUT_CHROMIUM_PATH=/usr/bin/chromium' >> .env   # Playwright's own arm64 build is unreliable
+```
+
 The unit wraps the process in `xvfb-run` on purpose: **headless Chromium is
-detected and blocked; the same browser on a virtual display is not.**
+detected and blocked; the same browser on a virtual display is not.** With the
+default sources nothing ever launches a browser, and `xvfb-run` is a harmless
+no-op wrapper.
 
 The UI binds `0.0.0.0:8080` with **no authentication** — it is meant for your
 LAN. Set `SCOUT_AUTH_USER` and `SCOUT_AUTH_PASSWORD` to turn on HTTP basic auth,

@@ -11,6 +11,7 @@ and three `listing_source` rows, so the digest can link to all of them.
 from __future__ import annotations
 
 import json
+import logging
 import sqlite3
 from collections.abc import Iterator
 from contextlib import contextmanager
@@ -20,6 +21,8 @@ from typing import Any
 
 from .config import get_config
 from .models import Criteria, Settings
+
+log = logging.getLogger(__name__)
 
 SCHEMA = """
 PRAGMA journal_mode = WAL;
@@ -192,6 +195,23 @@ def connect(path: Path | None = None) -> Iterator[sqlite3.Connection]:
 def init_db(path: Path | None = None) -> None:
     with connect(path) as conn:
         conn.executescript(SCHEMA)
+    restrict_permissions(path)
+
+
+def restrict_permissions(path: Path | None = None) -> None:
+    """Make the database readable only by its owner.
+
+    The settings table holds the SMTP and IMAP passwords and the OpenAI key in
+    plain text, so a world-readable file is a real leak on a shared Pi. Storing
+    them encrypted would need a key, and that key would have to live in .env —
+    which is the file this feature exists to avoid editing. File permissions are
+    the honest protection here, not encryption theatre.
+    """
+    p = path or db_file()
+    try:
+        p.chmod(0o600)
+    except OSError as exc:  # e.g. a filesystem without Unix permissions
+        log.warning("could not restrict permissions on %s: %s", p, exc)
 
 
 # --------------------------------------------------------------------------
@@ -238,6 +258,9 @@ def load_settings(conn: sqlite3.Connection) -> Settings:
 
 def save_settings(conn: sqlite3.Connection, settings: Settings) -> None:
     set_kv(conn, "settings", settings.model_dump(mode="json"))
+    # This row can now carry passwords, and the database may predate the
+    # permissions being tightened in `init_db`.
+    restrict_permissions()
 
 
 def get_cursor(conn: sqlite3.Connection, source: str, key: str) -> str | None:

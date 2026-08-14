@@ -154,17 +154,54 @@ async def criteria_save(request: Request):
 # --------------------------------------------------------------------------
 
 
+#: Credentials the form never echoes back. Submitting one blank means "keep
+#: what is stored"; erasing one is an explicit button.
+SECRET_FIELDS = ("openai_api_key", "smtp_password", "imap_password")
+
+#: Fields where an empty form value means "unset, fall back to .env" rather
+#: than a literal empty value. Ports and the two TLS toggles are typed
+#: `int | None` / `bool | None` for exactly this.
+NULLABLE_FIELDS = ("smtp_port", "imap_port", "smtp_starttls", "imap_ssl")
+
+
+def _settings_context(settings: Settings) -> dict:
+    """Shared context for both the GET and the re-rendered-on-error POST.
+
+    Stored secrets are never sent to the browser — only their last four
+    characters, as a placeholder, so you can tell which one is loaded.
+    """
+    config = get_config()
+    creds = config.resolve(settings)
+    return {
+        "all_sources": list(SOURCES),
+        "creds": creds,
+        "env": config,
+        "db_path": str(config.db_path),
+        # Which layer each secret is coming from, so the page can say so.
+        "secret_state": {field: _secret_state(settings, config, field) for field in SECRET_FIELDS},
+    }
+
+
+def _secret_state(settings: Settings, config, field: str) -> dict:
+    stored = (getattr(settings, field, "") or "").strip()
+    from_env = (getattr(config, field, "") or "").strip()
+    return {
+        "stored_here": bool(stored),
+        "in_env": bool(from_env),
+        "hint": _mask(stored or from_env, "saved" if stored else "from .env"),
+    }
+
+
+def _mask(secret: str, origin: str) -> str:
+    """Enough of a secret to recognize it by, and where it is coming from."""
+    return f"…{secret[-4:]} ({origin})" if len(secret) >= 4 else ""
+
+
 @app.get("/settings", response_class=HTMLResponse)
 def settings_form(request: Request):
-    config = get_config()
-    return _page(
-        request,
-        "settings",
-        all_sources=list(SOURCES),
-        has_openai=config.has_openai,
-        has_smtp=config.has_smtp,
-        db_path=str(config.db_path),
-    )
+    with connect() as conn:
+        settings = load_settings(conn)
+    return _page(request, "settings", **_settings_context(settings))
 
 
 @app.post("/settings")
@@ -173,9 +210,22 @@ async def settings_save(request: Request):
     with connect() as conn:
         current = load_settings(conn).model_dump()
 
+        skip = ("enabled_sources", "recipients", *SECRET_FIELDS)
         for field, value in form.multi_items():
-            if field in current and field not in ("enabled_sources", "recipients"):
-                current[field] = value
+            if field in current and field not in skip:
+                # "" here means "not set, use .env" for these, not "the empty
+                # string" — otherwise a blank port box would fail validation.
+                current[field] = None if field in NULLABLE_FIELDS and value == "" else value
+
+        # Secret fields are rendered empty because we never echo a secret back,
+        # so an empty submission means "leave it alone" rather than "erase it".
+        # Clearing is its own explicit button per field.
+        for field in SECRET_FIELDS:
+            submitted = str(form.get(field, "")).strip()
+            if form.get(f"clear_{field}"):
+                current[field] = ""
+            elif submitted:
+                current[field] = submitted
 
         current["enabled_sources"] = form.getlist("enabled_sources")
         current["recipients"] = [
@@ -193,14 +243,10 @@ async def settings_save(request: Request):
         try:
             settings = Settings(**current)
         except Exception as exc:
-            config = get_config()
             return _page(
                 request,
                 "settings",
-                all_sources=list(SOURCES),
-                has_openai=config.has_openai,
-                has_smtp=config.has_smtp,
-                db_path=str(config.db_path),
+                **_settings_context(load_settings(conn)),
                 error=str(exc),
             )
         save_settings(conn, settings)
