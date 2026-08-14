@@ -1,0 +1,31 @@
+[Unit]
+Description=Appart-Scout — flat hunting between Zurich and Basel
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+WorkingDirectory=%h/appart-scout
+EnvironmentFile=%h/appart-scout/.env
+
+# xvfb-run gives Chromium a virtual display. This matters: headless Chromium is
+# fingerprinted and blocked by the portals' anti-bot layers, while the same
+# browser on a virtual display gets through. On a headless Pi this is the only
+# way to run "headed".
+#   sudo apt install xvfb chromium
+ExecStart=/usr/bin/xvfb-run -a --server-args="-screen 0 1440x900x24" \
+    %h/appart-scout/.venv/bin/scout serve
+
+Restart=on-failure
+RestartSec=30
+
+# Chromium is memory-hungry relative to a Pi; restart rather than let the OOM
+# killer take the whole service down.
+MemoryMax=1400M
+
+StandardOutput=journal
+StandardError=journal
+SyslogIdentifier=appart-scout
+
+[Install]
+WantedBy=default.target

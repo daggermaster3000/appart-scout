@@ -1,0 +1,107 @@
+{% extends "base.html" %}
+{% block content %}
+<h1>Ranked listings</h1>
+<p class="sub">
+  {{ items|length }} shown of {{ total }} active ·
+  scored against “{{ criteria.name }}”
+  {% if show_hidden %}· <a href="/">hide dismissed</a>{% else %}· <a href="/?show_hidden=true">show dismissed</a>{% endif %}
+</p>
+
+{% if not items %}
+<div class="empty">
+  Nothing ranked yet. Press <strong>Run now</strong> — the first run takes a few
+  minutes while it resolves commute times, then later runs are much faster.
+</div>
+{% endif %}
+
+<div class="grid">
+{% for item in items %}
+{% set listing = item.listing %}
+<article class="card">
+  {% if listing.images %}
+    <a href="{{ item.sources[0].url if item.sources else '#' }}" target="_blank" rel="noopener">
+      <img src="{{ listing.images[0].thumb_url or listing.images[0].url }}" alt="" loading="lazy">
+    </a>
+  {% endif %}
+  <div class="body">
+    <div class="row">
+      <span class="price">CHF {{ listing.price_chf|chf }}</span>
+      <span class="pill {{ 'good' if item.score >= 80 else 'mid' if item.score >= 65 else '' }}">
+        {{ '%.0f'|format(item.score) }}
+      </span>
+    </div>
+
+    <div class="facts">
+      {{ listing.rooms|rooms }} rooms · {{ listing.living_space_m2 or '—' }} m²<br>
+      {{ listing.street }}{% if listing.street %}, {% endif %}{{ listing.zipcode }} {{ listing.city }}
+    </div>
+
+    {% if item.commute_a or item.commute_b %}
+    <div class="facts">
+      🚆 {{ criteria.label_a }} <strong>{{ item.commute_a or '?' }}′</strong>
+       · {{ criteria.label_b }} <strong>{{ item.commute_b or '?' }}′</strong>
+    </div>
+    {% else %}
+    <div class="facts" title="Scored on price and size only until the timetable lookup runs">
+      🚆 commute not resolved yet — not eligible for the digest
+    </div>
+    {% endif %}
+
+    {% if item.vision and item.vision.verdict %}
+    <div class="verdict">
+      📷 {{ item.vision.verdict }}
+      {% if item.vision.red_flags %}
+        <div class="flags">⚠ {{ item.vision.red_flags|join('; ') }}</div>
+      {% endif %}
+    </div>
+    {% endif %}
+
+    {% if item.reasons %}
+    <ul class="reasons">
+      {% for reason in item.reasons[:3] %}<li>{{ reason }}</li>{% endfor %}
+    </ul>
+    {% endif %}
+
+    {% if item.parts %}
+    <details>
+      <summary class="facts">score breakdown</summary>
+      <div class="bars">
+        {% for name, value in item.parts.items() %}
+        <div class="b">
+          <span>{{ name.replace('_', ' ') }}</span>
+          <span class="track"><span class="fill" style="width: {{ (value * 100)|round }}%"></span></span>
+          <span>{{ (value * 100)|round|int }}</span>
+        </div>
+        {% endfor %}
+      </div>
+    </details>
+    {% endif %}
+
+    <div class="links">
+      {% for source in item.sources %}
+        <a href="{{ source.url }}" target="_blank" rel="noopener">{{ source.source }} ↗</a>
+      {% endfor %}
+    </div>
+
+    <div class="row">
+      <div class="acts">
+        <form method="post" action="/listing/{{ item.id }}/feedback">
+          <input type="hidden" name="verdict" value="up">
+          <button title="Good — we like this">👍</button>
+        </form>
+        <form method="post" action="/listing/{{ item.id }}/feedback">
+          <input type="hidden" name="verdict" value="shortlist">
+          <button title="Shortlist">⭐</button>
+        </form>
+        <form method="post" action="/listing/{{ item.id }}/feedback">
+          <input type="hidden" name="verdict" value="hidden">
+          <button title="Dismiss">✕</button>
+        </form>
+      </div>
+      {% if item.verdict %}<span class="facts">{{ item.verdict }}</span>{% endif %}
+    </div>
+  </div>
+</article>
+{% endfor %}
+</div>
+{% endblock %}

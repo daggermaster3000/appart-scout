@@ -1,0 +1,105 @@
+{% extends "base.html" %}
+{% block content %}
+<h1>Search criteria</h1>
+<p class="sub">
+  Hard filters remove listings entirely. Weights only reorder what survives —
+  drag one to zero to ignore that dimension.
+</p>
+
+<form class="settings" method="post" action="/criteria">
+  <h2>Budget and size</h2>
+  <div class="fields">
+    <label><span>Min rent (CHF)</span><input type="number" name="price_min" value="{{ criteria.price_min }}"></label>
+    <label><span>Max rent (CHF)</span><input type="number" name="price_max" value="{{ criteria.price_max }}"></label>
+    <label><span>Ideal rent (CHF)</span><input type="number" name="price_ideal" value="{{ criteria.price_ideal }}"></label>
+    <label><span>Min rooms</span><input type="number" step="0.5" name="rooms_min" value="{{ criteria.rooms_min }}"></label>
+    <label><span>Max rooms</span><input type="number" step="0.5" name="rooms_max" value="{{ criteria.rooms_max }}"></label>
+    <label><span>Ideal rooms</span><input type="number" step="0.5" name="rooms_ideal" value="{{ criteria.rooms_ideal }}"></label>
+    <label><span>Min m²</span><input type="number" name="space_min_m2" value="{{ criteria.space_min_m2 }}"></label>
+    <label><span>Max m²</span><input type="number" name="space_max_m2" value="{{ criteria.space_max_m2 }}"></label>
+    <label><span>Ideal m²</span><input type="number" name="space_ideal_m2" value="{{ criteria.space_ideal_m2 }}"></label>
+  </div>
+
+  <h2>The two commutes</h2>
+  <div class="fields">
+    <label><span>Name A</span><input type="text" name="label_a" value="{{ criteria.label_a }}"></label>
+    <label><span>Workplace A (station or address)</span><input type="text" name="workplace_a" value="{{ criteria.workplace_a }}"></label>
+    <label><span>Max minutes A</span><input type="number" name="commute_a_max_min" value="{{ criteria.commute_a_max_min }}"></label>
+    <label><span>Name B</span><input type="text" name="label_b" value="{{ criteria.label_b }}"></label>
+    <label><span>Workplace B (station or address)</span><input type="text" name="workplace_b" value="{{ criteria.workplace_b }}"></label>
+    <label><span>Max minutes B</span><input type="number" name="commute_b_max_min" value="{{ criteria.commute_b_max_min }}"></label>
+    <label><span>Max combined minutes</span><input type="number" name="commute_total_max_min" value="{{ criteria.commute_total_max_min }}"></label>
+    <label><span>Arrive by</span><input type="text" name="arrive_by" value="{{ criteria.arrive_by }}" placeholder="08:30"></label>
+  </div>
+  <p class="hint">
+    Times are door-to-door on a weekday morning: walk to the nearest station plus
+    the median of the three fastest trains arriving by that time.
+  </p>
+
+  <h2>Where to look</h2>
+  <div class="checks">
+    {% for code in ['AG', 'ZH', 'BL', 'BS', 'SO', 'BE', 'LU', 'ZG'] %}
+    <label><input type="checkbox" name="cantons" value="{{ code }}"
+      {% if code in criteria.cantons %}checked{% endif %}> {{ code }}</label>
+    {% endfor %}
+  </div>
+  <p class="hint">Cantons steer the portal searches. The commute limits above are what actually define the area.</p>
+
+  <h2>Must have</h2>
+  <div class="checks">
+    {% for amenity in amenities %}
+    <label><input type="checkbox" name="must_have" value="{{ amenity }}"
+      {% if amenity in criteria.must_have %}checked{% endif %}> {{ amenity.replace('_', ' ')|lower }}</label>
+    {% endfor %}
+  </div>
+
+  <h2>Nice to have</h2>
+  <div class="checks">
+    {% for amenity in amenities %}
+    <label><input type="checkbox" name="nice_to_have" value="{{ amenity }}"
+      {% if amenity in criteria.nice_to_have %}checked{% endif %}> {{ amenity.replace('_', ' ')|lower }}</label>
+    {% endfor %}
+  </div>
+
+  <h2>Exclusions</h2>
+  <div class="fields">
+    <label style="grid-column: 1 / -1;">
+      <span>Reject if the text contains (comma separated)</span>
+      <input type="text" name="exclude_keywords" value="{{ criteria.exclude_keywords|join(', ') }}">
+    </label>
+    <label><span>Move in no earlier than</span><input type="date" name="move_in_earliest" value="{{ criteria.move_in_earliest or '' }}"></label>
+    <label><span>Move in no later than</span><input type="date" name="move_in_latest" value="{{ criteria.move_in_latest or '' }}"></label>
+  </div>
+  <div class="checks" style="margin-top:12px;">
+    {% for value, label in [('APARTMENT', 'flats'), ('HOUSE', 'houses'), ('SHARED', 'shared')] %}
+    <label><input type="checkbox" name="categories" value="{{ value }}"
+      {% if value in criteria.categories %}checked{% endif %}> {{ label }}</label>
+    {% endfor %}
+  </div>
+
+  <h2>Weights</h2>
+  {% for field, label in [
+      ('w_price', 'Price'), ('w_space', 'Size'), ('w_rooms', 'Rooms'),
+      ('w_commute_a', 'Commute ' ~ criteria.label_a), ('w_commute_b', 'Commute ' ~ criteria.label_b),
+      ('w_commute_fairness', 'Commute fairness (both partners similar)'),
+      ('w_amenities', 'Amenities'), ('w_freshness', 'Freshly posted'),
+      ('w_vision', 'Photo quality')] %}
+  {% set value = criteria[field] %}
+  <div class="weight">
+    <span>{{ label }}</span>
+    <input type="range" min="0" max="10" step="0.5" name="{{ field }}" value="{{ value }}"
+           oninput="this.nextElementSibling.textContent = this.value">
+    <span>{{ value }}</span>
+  </div>
+  {% endfor %}
+
+  <h2>What the photos should show</h2>
+  <label>
+    <span>Given to the vision model verbatim — write it the way you'd tell a friend.</span>
+    <textarea name="vision_brief">{{ criteria.vision_brief }}</textarea>
+  </label>
+
+  <p style="margin-top:22px;"><button class="primary">Save criteria</button></p>
+  <p class="hint">Saving re-scores everything on the next run.</p>
+</form>
+{% endblock %}

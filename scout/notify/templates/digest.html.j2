@@ -1,0 +1,100 @@
+{#
+  Email HTML, not web HTML: tables for layout and inline styles only, because
+  Gmail strips <style> blocks and most clients ignore flexbox.
+#}
+<div style="background:#f4f5f7;padding:24px 12px;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;">
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="max-width:640px;margin:0 auto;">
+  <tr><td>
+    <h1 style="margin:0 0 4px;font-size:20px;color:#111;">Appart-Scout</h1>
+    <p style="margin:0 0 20px;font-size:13px;color:#666;">
+      {{ items|length }} match{{ '' if items|length == 1 else 'es' }} ·
+      {{ criteria.label_a }} → {{ criteria.workplace_a }} ·
+      {{ criteria.label_b }} → {{ criteria.workplace_b }} ·
+      {{ generated_at }}
+    </p>
+  </td></tr>
+
+  {% if not items %}
+  <tr><td style="background:#fff;border-radius:8px;padding:24px;text-align:center;color:#666;font-size:14px;">
+    Nothing new matched your criteria this time.
+  </td></tr>
+  {% endif %}
+
+  {% for item in items %}
+  {% set listing = item.listing %}
+  <tr><td style="background:#fff;border-radius:8px;padding:0;margin-bottom:16px;
+                 border:1px solid #e3e5e8;overflow:hidden;">
+    <table role="presentation" width="100%" cellpadding="0" cellspacing="0">
+      {% if listing.images %}
+      <tr><td>
+        <a href="{{ item.sources[0].url if item.sources else '#' }}">
+          <img src="{{ listing.images[0].url }}" width="640" alt=""
+               style="width:100%;max-width:640px;height:auto;display:block;border:0;">
+        </a>
+      </td></tr>
+      {% endif %}
+
+      <tr><td style="padding:16px 18px;">
+        <table role="presentation" width="100%" cellpadding="0" cellspacing="0">
+          <tr>
+            <td style="font-size:17px;font-weight:600;color:#111;">
+              CHF {{ listing.price_chf|chf }}<span style="font-size:13px;font-weight:400;color:#777;">/month</span>
+            </td>
+            <td align="right">
+              <span style="display:inline-block;background:{% if item.score >= 80 %}#0a7d33{% elif item.score >= 65 %}#b8860b{% else %}#777{% endif %};
+                           color:#fff;font-size:13px;font-weight:600;padding:3px 9px;border-radius:11px;">
+                {{ '%.0f'|format(item.score) }}/100
+              </span>
+            </td>
+          </tr>
+        </table>
+
+        <p style="margin:6px 0 10px;font-size:14px;color:#333;">
+          {{ listing.rooms|rooms }} rooms ·
+          {{ listing.living_space_m2 or '—' }} m² ·
+          {{ listing.street }}{% if listing.street %}, {% endif %}{{ listing.zipcode }} {{ listing.city }}
+        </p>
+
+        {% if item.commute_a or item.commute_b %}
+        <p style="margin:0 0 10px;font-size:13px;color:#444;">
+          🚆
+          {% if item.commute_a %}{{ criteria.label_a }} <strong>{{ item.commute_a }}′</strong>{% endif %}
+          {% if item.commute_a and item.commute_b %} · {% endif %}
+          {% if item.commute_b %}{{ criteria.label_b }} <strong>{{ item.commute_b }}′</strong>{% endif %}
+        </p>
+        {% endif %}
+
+        {% if item.vision and item.vision.verdict %}
+        <p style="margin:0 0 10px;padding:9px 11px;background:#f7f8fa;border-left:3px solid #ccc;
+                  font-size:13px;color:#333;border-radius:0 4px 4px 0;">
+          📷 {{ item.vision.verdict }}
+          {% if item.vision.red_flags %}
+          <br><span style="color:#a33;">⚠ {{ item.vision.red_flags|join('; ') }}</span>
+          {% endif %}
+        </p>
+        {% endif %}
+
+        {% if item.reasons %}
+        <ul style="margin:0 0 12px;padding-left:18px;font-size:13px;color:#555;">
+          {% for reason in item.reasons[:3] %}<li>{{ reason }}</li>{% endfor %}
+        </ul>
+        {% endif %}
+
+        <p style="margin:0;font-size:13px;">
+          {% for source in item.sources %}
+          <a href="{{ source.url }}"
+             style="display:inline-block;margin:0 8px 4px 0;padding:6px 12px;background:#111;
+                    color:#fff;text-decoration:none;border-radius:5px;">{{ source.source }}</a>
+          {% endfor %}
+        </p>
+      </td></tr>
+    </table>
+  </td></tr>
+  <tr><td style="height:16px;line-height:16px;">&nbsp;</td></tr>
+  {% endfor %}
+
+  <tr><td style="padding-top:8px;font-size:11px;color:#999;text-align:center;">
+    Sent by Appart-Scout. Change criteria or cadence in the web UI.
+  </td></tr>
+</table>
+</div>

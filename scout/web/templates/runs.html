@@ -1,0 +1,46 @@
+{% extends "base.html" %}
+{% block content %}
+<h1>Run history</h1>
+<p class="sub">What each source actually did — the fastest way to spot a portal that has started blocking us.</p>
+
+{% if not runs %}
+<div class="empty">No runs yet. Press <strong>Run now</strong>.</div>
+{% endif %}
+
+{% for run in runs %}
+<h2>
+  #{{ run.id }} · {{ run.started_at[:16].replace('T', ' ') }}
+  {% if run.ok %}<span class="ok-dot">ok</span>
+  {% elif run.finished_at %}<span class="bad-dot">failed</span>
+  {% else %}<span>running…</span>{% endif %}
+</h2>
+
+{% if run.error %}<div class="flash err">{{ run.error }}</div>{% endif %}
+
+{% if run.stats %}
+<p class="sub">
+  {{ run.stats.get('fetched', 0) }} fetched ·
+  {{ run.stats.get('merged', 0) }} after dedup ·
+  {{ run.stats.get('kept', 0) }} passed filters ·
+  {{ run.stats.get('new', 0) }} new ·
+  {{ run.stats.get('vision', 0) }} photo-scored ·
+  {{ run.stats.get('commute_api_calls', 0) }} timetable calls
+</p>
+{% endif %}
+
+<table>
+  <tr><th>source</th><th>fetched</th><th>seconds</th><th>status</th></tr>
+  {% for source in run.sources %}
+  <tr>
+    <td>{{ source.source }}</td>
+    <td>{{ source.n_fetched }}</td>
+    <td>{{ '%.1f'|format((source.duration_ms or 0) / 1000) }}</td>
+    <td>
+      {% if source.error %}<span class="bad-dot">{{ source.error }}</span>
+      {% else %}<span class="ok-dot">ok</span>{% endif %}
+    </td>
+  </tr>
+  {% endfor %}
+</table>
+{% endfor %}
+{% endblock %}

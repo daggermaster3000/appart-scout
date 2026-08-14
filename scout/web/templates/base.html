@@ -1,0 +1,40 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{% block title %}Appart-Scout{% endblock %}</title>
+  <link rel="stylesheet" href="/static/style.css">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🏠</text></svg>">
+</head>
+<body>
+<header>
+  <div class="wrap bar">
+    <a class="brand" href="/">🏠 Appart-Scout</a>
+    <nav>
+      <a href="/" class="{{ 'on' if nav == 'index' }}">Listings</a>
+      <a href="/criteria" class="{{ 'on' if nav == 'criteria' }}">Criteria</a>
+      <a href="/settings" class="{{ 'on' if nav == 'settings' }}">Settings</a>
+      <a href="/runs" class="{{ 'on' if nav == 'runs' }}">Runs</a>
+    </nav>
+    <form method="post" action="/run">
+      <button class="run" {% if running %}disabled{% endif %}>
+        {{ 'Running…' if running else 'Run now' }}
+      </button>
+    </form>
+  </div>
+</header>
+
+<main class="wrap">
+  {% if error %}<div class="flash err">{{ error }}</div>{% endif %}
+  {% if request.query_params.get('saved') %}<div class="flash ok">Saved.</div>{% endif %}
+  {% block content %}{% endblock %}
+</main>
+
+<footer class="wrap">
+  {{ criteria.label_a }} → {{ criteria.workplace_a }} ·
+  {{ criteria.label_b }} → {{ criteria.workplace_b }}
+  {% if next_run %} · next run {{ next_run.strftime('%d.%m %H:%M') }}{% endif %}
+</footer>
+</body>
+</html>

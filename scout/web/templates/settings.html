@@ -1,0 +1,67 @@
+{% extends "base.html" %}
+{% block content %}
+<h1>Settings</h1>
+<p class="sub">
+  Secrets (OpenAI key, SMTP password) live in <code>.env</code>, not here.
+  OpenAI: {% if has_openai %}<span class="ok-dot">configured</span>{% else %}<span class="bad-dot">missing</span>{% endif %} ·
+  SMTP: {% if has_smtp %}<span class="ok-dot">configured</span>{% else %}<span class="bad-dot">missing</span>{% endif %} ·
+  database <code>{{ db_path }}</code>
+</p>
+
+<form class="settings" method="post" action="/settings">
+  <h2>Sources</h2>
+  <div class="checks">
+    {% for source in all_sources %}
+    <label><input type="checkbox" name="enabled_sources" value="{{ source }}"
+      {% if source in settings.enabled_sources %}checked{% endif %}> {{ source }}</label>
+    {% endfor %}
+  </div>
+  <p class="hint">
+    Flatfox and ImmoScout24 are verified working. Homegate, Newhome and Comparis
+    need a headed browser and may report “blocked” — see the Runs page for what
+    each source actually did.
+  </p>
+
+  <h2>Schedule</h2>
+  <div class="fields">
+    <label><span>Scrape every (hours)</span><input type="number" name="run_every_hours" value="{{ settings.run_every_hours }}"></label>
+    <label><span>Digest every (days)</span><input type="number" name="digest_every_days" value="{{ settings.digest_every_days }}"></label>
+    <label><span>Listings per digest</span><input type="number" name="digest_size" value="{{ settings.digest_size }}"></label>
+    <label><span>Ignore listings older than (days)</span><input type="number" name="max_listing_age_days" value="{{ settings.max_listing_age_days }}"></label>
+  </div>
+
+  <h2>Email</h2>
+  <label>
+    <span>Recipients (comma or newline separated)</span>
+    <textarea name="recipients">{{ settings.recipients|join(', ') }}</textarea>
+  </label>
+  <div class="checks" style="margin-top:12px;">
+    <label><input type="checkbox" name="send_when_empty" {% if settings.send_when_empty %}checked{% endif %}> send even when there is nothing new</label>
+    <label><input type="checkbox" name="instant_alert_enabled" {% if settings.instant_alert_enabled %}checked{% endif %}> instant alert for strong matches</label>
+  </div>
+  <div class="fields" style="margin-top:12px;">
+    <label><span>Instant alert threshold (score)</span><input type="number" step="1" name="instant_alert_min_score" value="{{ settings.instant_alert_min_score }}"></label>
+  </div>
+
+  <h2>Photo evaluation</h2>
+  <div class="checks">
+    <label><input type="checkbox" name="vision_enabled" {% if settings.vision_enabled %}checked{% endif %}> evaluate photos with OpenAI</label>
+  </div>
+  <div class="fields" style="margin-top:12px;">
+    <label><span>Listings per run</span><input type="number" name="vision_top_n" value="{{ settings.vision_top_n }}"></label>
+    <label><span>Photos per listing</span><input type="number" name="vision_max_photos" value="{{ settings.vision_max_photos }}"></label>
+  </div>
+  <p class="hint">
+    Only the top-ranked unseen listings are photographed, and each result is
+    cached forever — cost tracks new listings, not catalogue size.
+  </p>
+
+  <h2>Limits</h2>
+  <div class="fields">
+    <label><span>Max timetable API calls per run</span><input type="number" name="max_commute_calls_per_run" value="{{ settings.max_commute_calls_per_run }}"></label>
+  </div>
+  <p class="hint">transport.opendata.ch is free but soft-limited to roughly 1000 requests a day. Anything not resolved this run is picked up next run.</p>
+
+  <p style="margin-top:22px;"><button class="primary">Save settings</button></p>
+</form>
+{% endblock %}

@@ -1,0 +1,1764 @@
+{
+ "resultList": {
+  "search": {
+   "fullSearch": {
+    "result": {
+     "hasNextPage": true,
+     "hasPreviousPage": false,
+     "itemsPerPage": 20,
+     "page": 1,
+     "pageCount": 33,
+     "resultCount": 651,
+     "start": 0,
+     "listings": [
+      {
+       "listingType": {
+        "type": "PREMIUM"
+       },
+       "id": "4003368458",
+       "listing": {
+        "address": {
+         "geoCoordinates": {
+          "latitude": 47.321864892065,
+          "longitude": 7.974647811981,
+          "accuracy": "HIGH"
+         },
+         "geoTags": [
+          "geo-canton-aargau",
+          "geo-country-switzerland",
+          "geo-zipcode-5745",
+          "geo-region-zofingen",
+          "geo-city-safenwil"
+         ],
+         "locality": "Safenwil",
+         "postalCode": "5745",
+         "street": "Walterswilerstrasse 15",
+         "region": "AG"
+        },
+        "categories": [
+         "APARTMENT",
+         "FLAT"
+        ],
+        "characteristics": {
+         "hasParking": true,
+         "livingSpace": 93,
+         "hasBalcony": true,
+         "hasGarage": true,
+         "hasNiceView": true,
+         "numberOfRooms": 3.5,
+         "yearBuilt": 2026,
+         "isNewBuilding": true
+        },
+        "id": "4003368458",
+        "localization": {
+         "de": {
+          "text": {
+           "title": "Neubau - Bezugsfertige 3.5-Zi-Wohnung in Mehrfamilienhaus",
+           "description": "Im Herzen von Safenwil vermieten wir vier exklusive 3½-Zimmer-Wohnungen (2x EG und 2x 1.OG) mit grosszügiger Terrasse oder Balkon.Die 3½-Zimmer-Wohnungen sind modern und lichtdurchflutet, in hochwertigem Ausbaustandard.Die Wohnung verfügt über 2 Schlafzimmer, 2 Nasszellen (davon 1 Nasszelle mit Dusche), grosse Küche und separatem Reduit auf dem Balkon / Terrasse und mit eigener Waschmaschine / Tumbler, sowie einem grosszügigem Wohn- und Essbereich. Zusätzlich liefert die hauseigene Solaranlage nachhaltigen und preiswerten Strom.Ein überdachter Parkplatz für ein Fahrzeug kann optional für CHF 100.-/Monat dazu gemietet werden. Der Anschluss von Elektroautos ist nach Absprache möglich und eine Installation ist vorbereitet.Safenwil ist ideal für die Benützung des öffentlichen Verkehrs oder des Individualverkehrs gelegen.Die Wohnungen sind als Erstbezug bereit für den Einzug.Wir legen Wert auf eine langfristige, angenehme Mieterschaft, welche die Vorzüge dieser Lage zu schätzen weiss."
+          },
+          "attachments": [
+           {
+            "url": "https://cdn.immoscout24.ch/listings/v2/is24nif/4003368458/image/7cf99072f35e33e0590ab153d26a8f33.jpg",
+            "file": "a1f628b3a8.jpg",
+            "metadata": {
+             "byteSize": 101898,
+             "contentType": "image/jpeg",
+             "image": {
+              "width": 1500,
+              "height": 1000
+             },
+             "checksum": {
+              "value": "881f02b5061153040cefbcc80e59848b1dee0692dd4ef5d2fac6919089214285",
+              "algorithm": "SHA256"
+             }
+            },
+            "alt": "Modern kitchen with white cabinets, black countertop, built-in sink, and oven. Wooden flooring and recessed lighting.",
+            "type": "IMAGE",
+            "attachmentAnnotation": {
+             "image": {
+              "classification": "Kitchen"
+             }
+            }
+           },
+           {
+            "type": "IMAGE",
+            "attachmentAnnotation": {
+             "image": {
+              "classification": "Unfurnished Room"
+             }
+            },
+            "alt": "Empty room with light-colored walls, wooden flooring, and white cabinetry in the background. No furniture or personal items are present.",
+            "url": "https://cdn.immoscout24.ch/listings/v2/is24nif/4003368458/image/c306ff5340fafa6889770b3e1008f6f3.jpg",
+            "file": "4fa09b2dce.jpeg",
+            "metadata": {
+             "byteSize": 207351,
+             "checksum": {
+              "value": "cc5ec4e28051c2802544e9e5c0413b5fd0e9241f27a9f72d609a0486461a92fa",
+              "algorithm": "SHA256"
+             },
+             "contentType": "image/jpeg",
+             "image": {
+              "height": 1125,
+              "width": 1500
+             }
+            }
+           },
+           {
+            "file": "e317b2c24e.jpeg",
+            "alt": "Modern bathroom with a toilet, double sink, mirror, and glass shower enclosure. Light-colored tiles and a window provide natural light.",
+            "metadata": {
+             "checksum": {
+              "algorithm": "SHA256",
+              "value": "01983e63bea9f9c339dec6812afc1016d8a90be2e14634bac2f93abf5505cea1"
+             },
+             "byteSize": 374601,
+             "image": {
+              "height": 2000,
+              "width": 1500
+             },
+             "contentType": "image/jpeg"
+            },
+            "attachmentAnnotation": {
+             "image": {
+              "classification": "Bathroom"
+             }
+            },
+            "url": "https://cdn.immoscout24.ch/listings/v2/is24nif/4003368458/image/65df7f11b09cbce3f2e1ae38c5ddd974.jpg",
+            "type": "IMAGE"
+           },
+           {
+            "type": "IMAGE",
+            "alt": "Modern bathroom with a glass-enclosed shower, a white sink, and a sleek faucet.",
+            "attachmentAnnotation": {
+             "image": {
+              "classification": "Bathroom"
+             }
+            },
+            "url": "https://cdn.immoscout24.ch/listings/v2/is24nif/4003368458/image/c63047fbac9b224792d85f9d8f8c0022.jpg",
+            "metadata": {
+             "image": {
+              "height": 2000,
+              "width": 1500
+             },
+             "contentType": "image/jpeg",
+             "checksum": {
+              "value": "8d84b0869fe7859c22000d479080f92918b5f3b69a8b866a7d5b98f38486af65",
+              "algorithm": "SHA256"
+             },
+             "byteSize": 408485
+            },
+            "file": "8cd794d3f1.jpeg"
+           },
+           {
+            "type": "IMAGE",
+            "attachmentAnnotation": {
+             "image": {
+              "classification": "Bathroom"
+             }
+            },
+            "alt": "Modern bathroom with grey tiled walls, beige tiled floor, double sink vanity with white cabinets, toilet, and large mirror above the sink.",
+            "file": "1ab44b4ca4.jpeg",
+            "metadata": {
+             "byteSize": 425380,
+             "contentType": "image/jpeg",
+             "image": {
+              "height": 2000,
+              "width": 1500
+             },
+             "checksum": {
+              "algorithm": "SHA256",
+              "value": "5a6332b286253eaa8ae61a76f147bc91fb84210b08168be7df704c6ca1cf8c29"
+             }
+            },
+            "url": "https://cdn.immoscout24.ch/listings/v2/is24nif/4003368458/image/b406aad8c19a8af0b60a76a4f2115323.jpg"
+           },
+           {
+            "alt": "Modern bathroom with double sink, mirrored cabinet, and glass-enclosed shower area.",
+            "attachmentAnnotation": {
+             "image": {
+              "classification": "Bathroom"
+             }
+            },
+            "url": "https://cdn.immoscout24.ch/listings/v2/is24nif/4003368458/image/965d49929fa7e477f9880c5db68c90c0.jpg",
+            "file": "7c74314720.jpg",
+            "metadata": {
+             "contentType": "image/jpeg",
+             "image": {
+              "height": 2250,
+              "width": 1500
+             },
+             "checksum": {
+              "value": "810454c90094524976ea2104f72cdd3a437d1eb438bde30597638721dba6ee8f",
+              "algorithm": "SHA256"
+             },
+             "byteSize": 300842
+            },
+            "type": "IMAGE"
+           },
+           {
+            "alt": "Modern bathroom with a white sink, toilet, mirror, and wooden flooring.",
+            "type": "IMAGE",
+            "attachmentAnnotation": {
+             "image": {
+              "classification": "Bathroom"
+             }
+            },
+            "metadata": {
+             "checksum": {
+              "algorithm": "SHA256",
+              "value": "66a90b8a5dc0c1345ebce4f1ca12b35ab7638804a533ece53e626516328fa18a"
+             },
+             "byteSize": 384762,
+             "image": {
+              "height": 2000,
+              "width": 1500
+             },
+             "contentType": "image/jpeg"
+            },
+            "url": "https://cdn.immoscout24.ch/listings/v2/is24nif/4003368458/image/32fe7294b6650fc374f8d91416a558a8.jpg",
+            "file": "fca32a49d3.jpeg"
+           },
+           {
+            "file": "48ea305188.jpg",
+            "metadata": {
+             "byteSize": 295263,
+             "checksum": {
+              "algorithm": "SHA256",
+              "value": "cba10bf8fb9b8d54d2cb0163906f8be96a387d50f87328a7397dd8bcf7be520f"
+             },
+             "image": {
+              "height": 2250,
+              "width": 1500
+             },
+             "contentType": "image/jpeg"
+            },
+            "attachmentAnnotation": {
+             "image": {
+              "classification": "Unfurnished Room"
+             }
+            },
+            "url": "https://cdn.immoscout24.ch/listings/v2/is24nif/4003368458/image/1916954811d04bd7c982af6145fddf5f.jpg",
+            "alt": "Empty room with wooden flooring, white walls, and large glass sliding doors leading to a balcony or outdoor area.",
+            "type": "IMAGE"
+           },
+           {
+            "attachmentAnnotation": {
+             "image": {
+              "classification": "Unfurnished Room"
+             }
+            },
+            "url": "https://cdn.immoscout24.ch/listings/v2/is24nif/4003368458/image/5d19d5caa2eeda58e21fa1b2a6232a74.jpg",
+            "file": "23ac1fb0ad.jpeg",
+            "type": "IMAGE",
+            "alt": "Empty room with wooden flooring and white walls, featuring a large sliding glass door leading to an outdoor area.",
+            "metadata": {
+             "byteSize": 399953,
+             "contentType": "image/jpeg",
+             "checksum": {
+              "algorithm": "SHA256",
+              "value": "1d6ed1e833d4003b6ae3fbade63ac4c0066f631957252b0680e613534ba47de8"
+             },
+             "image": {
+              "height": 2000,
+              "width": 1500
+             }
+            }
+           },
+           {
+            "type": "IMAGE",
+            "file": "6541ff4eab.jpeg",
+            "url": "https://cdn.immoscout24.ch/listings/v2/is24nif/4003368458/image/f75592e09ef1a537e495e2773f5c771e.jpg",
+            "attachmentAnnotation": {
+             "image": {
+              "classification": "Furnished Room"
+             }
+            },
+            "alt": "A small, unfurnished room with light-colored walls and wooden flooring, featuring a stacked washing machine and dryer unit.",
+            "metadata": {
+             "image": {
+              "width": 1500,
+              "height": 1500
+             },
+             "byteSize": 239807,
+             "checksum": {
+              "value": "e511f232d910876f1dd0409aa5061f5481c6857b827c4ecda21c07883947d973",
+              "algorithm": "SHA256"
+             },
+             "contentType": "image/jpeg"
+            }
+           },
+           {
+            "metadata": {
+             "contentType": "image/jpeg",
+             "checksum": {
+              "algorithm": "SHA256",
+              "value": "f99522a12acf5f119ec9376961c5e69d0e660ea40d116bdf84c811638344b414"
+             },
+             "byteSize": 80716,
+             "image": {
+              "height": 1172,
+              "width": 754
+             }
+            },
+            "type": "IMAGE",
+            "url": "https://cdn.immoscout24.ch/listings/v2/is24nif/4003368458/image/3f29b507c3da700e5140faa7a5699a9a.jpg",
+            "file": "f0a45e17fc.jpg",
+            "alt": "Ground floor floor plan showing kitchen/dining/living area, bedroom, bathroom, storage room, entrance, and carport.",
+            "attachmentAnnotation": {
+             "image": {
+              "classification": "Floor Plan",
+              "floorPlan": {
+               "confidence": "low"
+              }
+             }
+            }
+           },
+           {
+            "file": "e937d43dbe.jpg",
+            "attachmentAnnotation": {
+             "image": {
+              "classification": "Building"
+             }
+            },
+            "alt": "Modern two-story building with solar panels on the roof, balconies, and surrounding greenery.",
+            "metadata": {
+             "checksum": {
+              "algorithm": "SHA256",
+              "value": "c0b9a6c3f147118be6f5052821e1d4d6c380dcfdaf8a7421c25bf4bd26b30b3a"
+             },
+             "contentType": "image/jpeg",
+             "image": {
+              "height": 821,
+              "width": 1500
+             },
+             "byteSize": 213438
+            },
+            "url": "https://cdn.immoscout24.ch/listings/v2/is24nif/4003368458/image/a661f410dd3290409a10754c66b63b32.jpg",
+            "type": "IMAGE"
+           },
+           {
+            "attachmentAnnotation": {
+             "image": {
+              "classification": "House"
+             }
+            },
+            "file": "1592619d92.jpg",
+            "metadata": {
+             "byteSize": 283385,
+             "checksum": {
+              "algorithm": "SHA256",
+              "value": "262278f804fcad08c884cec5f5607b788bdfcf01755838c335c422413c738232"
+             },
+             "image": {
+              "width": 1500,
+              "height": 843
+             },
+             "contentType": "image/jpeg"
+            },
+            "type": "IMAGE",
+            "url": "https://cdn.immoscout24.ch/listings/v2/is24nif/4003368458/image/5c635907decfe40b13c6b443fbff37a1.jpg",
+            "alt": "A modern two-story house with a flat roof covered in solar panels, a spacious balcony, and a small artificial grass area on the patio."
+           },
+           {
+            "url": "https://cdn.immoscout24.ch/listings/v2/is24nif/4003368458/document/ac5e7f102a850de7c11ef7669862978d.pdf",
+            "file": "Mehrfamilienhaus 4x3.5-Zimmer.pdf",
+            "type": "DOCUMENT",
+            "metadata": {
+             "contentType": "application/pdf",
+             "byteSize": 5514279,
+             "checksum": {
+              "algorithm": "SHA256",
+              "value": "be82fe38459fce08fb97436333da5dd07e8693ab2656c45669389ccbb18ae933"
+             }
+            }
+           }
+          ],
+          "isMachineTranslated": false
+         },
+         "it": {
+          "text": {
+           "title": "Edificio nuovo - appartamento di 3,5 locali pronto per essere occupato in una casa multifamiliare",
+           "description": "A Safenwil, affittiamo quattro appartamenti esclusivi di 3½ locali (2x piano terra e 2x primo piano) con una terrazza o un balcone spazioso. Gli appartamenti di 3½ locali sono moderni e luminosi, con un livello di finitura di alta qualità. L'appartamento dispone di 2 camere da letto, 2 bagni (di cui 1 con doccia), una cucina grande e un ritiro separato sul balcone/terrazza con la sua lavatrice/asciugatrice, nonché un ampio soggiorno e zona pranzo. Inoltre, il sistema solare dell'edificio fornisce energia elettrica sostenibile e a buon prezzo. Un posto auto coperto per un veicolo può essere affittato in opzione per CHF 100.-/mese. La connessione dei veicoli elettrici è possibile previo accordo e un'installazione è preparata. Safenwil è situata in modo ideale per l'uso dei trasporti pubblici o dei trasporti individuali. Gli appartamenti sono pronti per essere occupati come primo affitto. Noi valorizziamo un'affittanza a lungo termine, piacevole, che apprezza i vantaggi di questa posizione."
+          },
+          "attachments": [],
+          "isMachineTranslated": true
+         },
+         "en": {
+          "attachments": [],
+          "isMachineTranslated": true,
+          "text": {
+           "title": "New building - ready-to-move-in 3.5-room apartment in multi-family house",
+           "description": "In the heart of Safenwil, we are renting four exclusive 3½-room apartments (2x ground floor and 2x 1st floor) with a spacious terrace or balcony. The 3½-room apartments are modern and bright, with a high-quality finish. The apartment has 2 bedrooms, 2 wet cells (one with a shower), a large kitchen, and a separate retreat on the balcony/terrace with its own washing machine/tumbler, as well as a spacious living and dining area. Additionally, the building's solar system provides sustainable and affordable electricity. A covered parking space for one vehicle can be rented optionally for CHF 100.-/month. The connection of electric vehicles is possible by arrangement and an installation is prepared. Safenwil is ideally located for the use of public transport or individual transport. The apartments are ready for occupancy as a first rental. We value long-term, pleasant tenancy, which appreciates the advantages of this location."
+          }
+         },
+         "primary": "de",
+         "fr": {
+          "attachments": [],
+          "isMachineTranslated": true,
+          "text": {
+           "description": "Au cœur de Safenwil, nous louons quatre appartements exclusifs de 3½ pièces (2x rez-de-chaussée et 2x 1er étage) avec une terrasse ou un balcon spacieux. Les appartements de 3½ pièces sont modernes et lumineux, avec un niveau de finition de haute qualité. L'appartement dispose de 2 chambres, 2 cellules humides (dont 1 avec douche), une grande cuisine et un retrait séparé sur le balcon/terrasse avec sa propre machine à laver/ sécheuse, ainsi qu'un vaste espace de vie et de repas. En outre, le système solaire de l'immeuble fournit une électricité durable et abordable. Un espace de stationnement couvert pour un véhicule peut être loué en option pour CHF 100.-/mois. La connexion des véhicules électriques est possible après accord et une installation est préparée. Safenwil est idéalement situé pour l'utilisation des transports en commun ou des transports individuels. Les appartements sont prêts à être occupés en tant que premier loyer. Nous attachons de l'importance à une location à long terme, agréable, qui apprécie les avantages de cet emplacement.",
+           "title": "Nouveau bâtiment - appartement 3,5 pièces prêt à être occupé dans une maison multifamiliale"
+          }
+         }
+        },
+        "meta": {
+         "createdAt": "2026-08-07T12:47:16.187Z"
+        },
+        "offerType": "RENT",
+        "platforms": [
+         "immoscout24"
+        ],
+        "prices": {
+         "currency": "CHF",
+         "rent": {
+          "net": 1850,
+          "interval": "MONTH",
+          "extra": 200,
+          "gross": 2050
+         },
+         "buy": {}
+        },
+        "valueAddedServices": {}
+       },
+       "listingCard": {
+        "size": "L"
+       },
+       "listingScores": {
+        "listingCompletenessScore": 15,
+        "packageScore": 15
+       },
+       "listerBranding": {
+        "isQualityPartner": false
+       }
+      },
+      {
+       "listingType": {
+        "type": "PREMIUM"
+       },
+       "agencyAgent": {
+        "isPublic": false,
+        "avatarUrl": null,
+        "mobileNumber": "+41583603481",
+        "jobTitle": "Vermietungsberaterin",
+        "email": "robertina.karaqi@livit.ch",
+        "phoneNumber": "+41583603481",
+        "lastName": "Karaqi",
+        "logoBackgroundColor": null,
+        "firstName": "Robertina",
+        "headAgencyId": "isx397716"
+       },
+       "id": "4003329516",
+       "listing": {
+        "address": {
+         "geoCoordinates": {
+          "longitude": 8.165724811981,
+          "accuracy": "HIGH",
+          "latitude": 47.257003892066
+         },
+         "geoTags": [
+          "geo-zipcode-5734",
+          "geo-city-reinach-ag",
+          "geo-region-kulm",
+          "geo-canton-aargau",
+          "geo-country-switzerland"
+         ],
+         "locality": "Reinach",
+         "postalCode": "5734",
+         "street": "Lenzstrasse 15B",
+         "region": "AG"
+        },
+        "categories": [
+         "APARTMENT",
+         "FLAT"
+        ],
+        "characteristics": {
+         "hasNiceView": true,
+         "isMinergieGeneral": true,
+         "numberOfRooms": 3.5,
+         "yearBuilt": 2026,
+         "hasElevator": true,
+         "isChildFriendly": true,
+         "floor": 0,
+         "numberOfBathrooms": 2,
+         "hasBalcony": true,
+         "hasWashingMachine": true,
+         "hasDishwasher": true,
+         "isQuiet": true,
+         "isNewBuilding": true,
+         "isMinergieCertified": true,
+         "hasGarage": true,
+         "livingSpace": 90
+        },
+        "id": "4003329516",
+        "localization": {
+         "fr": {
+          "isMachineTranslated": true,
+          "attachments": [],
+          "text": {
+           "description": "À Lenzstrasse 13–19 à Reinach AG, le « Wyna » est en construction comme un complexe résidentiel conçu de manière durable avec des appartements à louer modernes pour différentes phases de la vie et exigences. Les appartements de la Maison 15 seront prêts à être occupés le 1er octobre 2026, et marquent le début d'un premier loyer échelonné.Les six appartements de 3,5 pièces disponibles impressionnent par leurs plans d'étage bien pensés, leurs salons lumineux et un niveau de construction élevé. Les espaces de vie et de repas spacieux rencontrent des zones de retrait clairement définies, créant une atmosphère de vie agréable pour les couples ou les personnes seules avec une prétention à la qualité et au confort.Les appartements à louer impressionnent par un niveau de propriétaire occupant élevé :<ul><li>Espace de vie et de repas avec cuisine ouverte</li><li>Cuisine avec plaque de cuisson à induction, four, cuisinière à vapeur, lave-vaisselle, réfrigérateur et congélateur</li><li>Deux cellules humides (salle de bain/WC et douche/WC)</li><li>Tour de buanderie dans l'appartement</li><li>Armoires encastrées dans le hall d'entrée</li><li>Balcon et espace de détente avec jardin privé spacieux</li><li>Compartiment de cave privé</li><li>Ascenseur</li></ul>La visite virtuelle 360° sert à illustrer le niveau de construction et montre un appartement au 4e étage - veuillez noter le plan d'étage.Le complexe résidentiel est conçu comme un espace de vie calme et vert. Les espaces extérieurs spacieux, un ruisseau et des zones de rencontre sans voiture créent une qualité de vie élevée et offrent un espace de détente. Dans le même temps, le projet répond aux exigences modernes en matière de vie durable et économe en énergie avec la norme Minergie, la pompe à chaleur à sonde de terre et le système solaire.Reinach dans le Wynetal combine la vie calme dans le vert avec une infrastructure excellente. Les possibilités de shopping dans le centre du village et les écoles sont à distance de marche confortable. L'arrêt de bus le plus proche est à environ 500 mètres, tandis que la gare de Reinach AG Nord est à environ 10 minutes à pied. Grâce aux bons transports en commun, les centres d'Aarau et de Lucerne peuvent également être atteints rapidement. Cette localisation résidentielle est idéale pour tous ceux qui veulent combiner la détente basée sur la nature avec une grande praticité au quotidien.Visitez notre site Web pour plus d'informations et pour postuler à votre appartement souhaité : www.wyna-mieten.chLes appartements de la Maison 15 sont disponibles pour une visite immédiate. Êtes-vous intéressé ? Alors nous nous réjouissons de votre contact.",
+           "title": "Premier loyer Wyna – Où la vie moderne rencontre des moments de jardin spacieux"
+          }
+         },
+         "de": {
+          "text": {
+           "title": "Erstvermietung Wyna – Wo modernes Wohnen auf grosszügige Gartenmomente trifft",
+           "description": "An der Lenzstrasse 13–19 in Reinach AG entsteht im «Wyna» eine nachhaltig konzipierte Wohnüberbauung mit modernen Mietwohnungen für unterschiedliche Lebensphasen und Ansprüche. Die Wohnungen im Haus 15 sind per 1. Oktober 2026 bezugsbereit und bilden den Auftakt einer etappenweisen Erstvermietung.Die sechs verfügbaren 3.5 Zimmer-Wohnungen überzeugen mit durchdachten Grundrissen, hellen Wohnräumen und einem hohen Ausbaustandard. Grosszügige Wohn- und Essbereiche treffen auf klar zonierte Rückzugsräume und schaffen ein angenehmes Wohngefühl für Paare oder Einzelpersonen mit Anspruch an Qualität und Komfort.Die Mietwohnungen überzeugen mit hohem Eigentumsstandard:<ul><li>Wohn- und Essbereich mit offener Küche</li><li>Küche mit Induktionskochfeld, Backofen, Dampfgarer, Geschirrspüler, Kühlschrank und Tiefkühler</li><li>zwei Nasszellen (Bad/WC sowie Dusche/WC)</li><li>Waschturm in der Wohnung</li><li>Einbauschränke im Eingangsbereich</li><li>Balkon sowie Sitzplatz mit grosszügigem Privatgarten</li><li>eigenes Kellerabteil</li><li>Lift</li></ul>Die virtuelle 360° Tour dient zur Veranschaulichung des Ausbaustandardes und zeigt eine Wohnung im 4. Obergeschoss - bitte beachten Sie den Grundrissplan.Die Überbauung ist als ruhiger und grüner Lebensraum konzipiert. Grosszügige Aussenflächen, ein Bachlauf sowie verkehrsfreie Begegnungszonen schaffen eine hohe Wohnqualität und bieten Raum für Erholung. Gleichzeitig erfüllt das Projekt mit Minergie-Standard, Erdsonden-Wärmepumpe und Solaranlage zeitgemässe Anforderungen an nachhaltiges und energieeffizientes Wohnen.Reinach im Wynental vereint ruhiges Wohnen im Grünen mit einer ausgezeichneten Infrastruktur. Einkaufsmöglichkeiten im Dorfzentrum sowie Schulen befinden sich in bequemer Gehdistanz. Die nächste Bushaltestelle erreichen Sie nach rund 500 Metern, während der Bahnhof Reinach AG Nord nur etwa 10 Gehminuten entfernt liegt. Dank der guten Verkehrsanbindung sind auch die Zentren von Aarau und Luzern schnell erreichbar. Diese Wohnlage ist ideal für alle, die naturnahe Erholung und eine hohe Alltagstauglichkeit miteinander verbinden möchten.Besuchen Sie unsere Webseite für weitere Informationen und um sich für Ihre Wunschwohnung zu bewerben: www.wyna-mieten.chDie Wohnungen im Haus 15 stehen ab sofort zur Besichtigung bereit. Sind Sie interessiert? Dann freuen wir uns auf Ihre Kontaktaufnahme."
+          },
+          "attachments": [
+           {
+            "type": "IMAGE",
+            "url": "https://cdn.immoscout24.ch/listings/v2/isx397716/4003329516/image/2668deae0fa64cfa133309b27a7431f6.jpg",
+            "alt": null,
+            "file": "c5c40f77e4.jpg",
+            "metadata": {
+             "image": {
+              "height": 1000,
+              "width": 1500
+             },
+             "contentType": "image/jpeg",
+             "byteSize": 291280,
+             "checksum": {
+              "algorithm": "SHA256",
+              "value": "9662eeaf383ea67ca7b371d66f0f48010071acb74879ec26e7908ce7d2cafb6d"
+             }
+            }
+           },
+           {
+            "alt": null,
+            "type": "IMAGE",
+            "metadata": {
+             "byteSize": 200511,
+             "checksum": {
+              "algorithm": "SHA256",
+              "value": "5a1f1faeab23279ed277b94f6bf48165cb11cc35c4e3132d6982f21090abdfc8"
+             },
+             "contentType": "image/jpeg",
+             "image": {
+              "height": 1000,
+              "width": 1500
+             }
+            },
+            "url": "https://cdn.immoscout24.ch/listings/v2/isx397716/4003329516/image/728c02253dd4893ad8507ddf637548bf.jpg",
+            "file": "bded9e7e82.jpg"
+           },
+           {
+            "metadata": {
+             "image": {
+              "width": 1500,
+              "height": 1000
+             },
+             "checksum": {
+              "value": "be7298f2f0f4c8711aa1b743941bd640c68022208f4831657d915e588f584abe",
+              "algorithm": "SHA256"
+             },
+             "contentType": "image/png",
+             "byteSize": 730478
+            },
+            "alt": null,
+            "file": "f651cd269f.png",
+            "type": "IMAGE",
+            "url": "https://cdn.immoscout24.ch/listings/v2/isx397716/4003329516/image/7ea9b0206bb7aa8c19fcd0ea8fe5ded4.png"
+           },
+           {
+            "metadata": {
+             "contentType": "image/png",
+             "byteSize": 731013,
+             "checksum": {
+              "algorithm": "SHA256",
+              "value": "4dd56bc359453d1d5fc31cb75a55674f67d40e20abb9bc48d36f9e63e9ee43cd"
+             },
+             "image": {
+              "height": 1000,
+              "width": 1500
+             }
+            },
+            "url": "https://cdn.immoscout24.ch/listings/v2/isx397716/4003329516/image/2b418fd370b0b4e9234f16c6a8b2ca62.png",
+            "file": "da01b0fd2f.png",
+            "type": "IMAGE",
+            "alt": null
+           },
+           {
+            "type": "IMAGE",
+            "metadata": {
+             "image": {
+              "height": 1000,
+              "width": 1500
+             },
+             "byteSize": 137790,
+             "contentType": "image/jpeg",
+             "checksum": {
+              "value": "575efb9162338b1585e3bb24de12a9b73cadc63093d778e8f3457885ee32e575",
+              "algorithm": "SHA256"
+             }
+            },
+            "file": "17944ad7b7.jpg",
+            "url": "https://cdn.immoscout24.ch/listings/v2/isx397716/4003329516/image/629dc1a9a36186352f41b2a0ea2ccd73.jpg",
+            "alt": null
+           },
+           {
+            "url": "https://cdn.immoscout24.ch/listings/v2/isx397716/4003329516/image/a5cda35d112906f6db161955847ff3f1.jpg",
+            "caption": "Ansicht Überbauung",
+            "file": "4e859113d3.jpg",
+            "metadata": {
+             "checksum": {
+              "value": "e32001a5ab5d949eefeb5dfe9f2f4cf91c0a5f6929c2b7b924c84cff7fa04152",
+              "algorithm": "SHA256"
+             },
+             "contentType": "image/jpeg",
+             "byteSize": 437942,
+             "image": {
+              "width": 1500,
+              "height": 1000
+             }
+            },
+            "type": "IMAGE",
+            "alt": null
+           },
+           {
+            "type": "DOCUMENT",
+            "metadata": {
+             "checksum": {
+              "algorithm": "SHA256",
+              "value": "2ba808624d5c1dc5fbf4338d7862c39d9ad2b085463e6d45492d5663c00939b0"
+             },
+             "contentType": "application/pdf",
+             "byteSize": 269722
+            },
+            "file": "factsheet_15a-2.1.pdf",
+            "url": "https://cdn.immoscout24.ch/listings/v2/isx397716/4003329516/document/11843588e3c1dff61a32a39c9591c9d2.pdf"
+           }
+          ],
+          "isMachineTranslated": false,
+          "urls": [
+           {
+            "type": "VIRTUAL_TOUR",
+            "value": "https://my.matterport.com/show/?m=TPf8RtMwqm1&ts=1"
+           },
+           {
+            "value": "https://www.wyna-mieten.ch/",
+            "title": "Wyna Reinach",
+            "type": "LINK"
+           }
+          ]
+         },
+         "it": {
+          "isMachineTranslated": true,
+          "attachments": [],
+          "text": {
+           "description": "Al Lenzstrasse 13–19 a Reinach AG, il \"Wyna\" è in costruzione come un complesso residenziale progettato in modo sostenibile con appartamenti in affitto moderni per diverse fasi della vita e requisiti. Gli appartamenti della Casa 15 saranno pronti per essere occupati il 1 ottobre 2026, e segnano l'inizio di un primo affitto scalare.I sei appartamenti di 3,5 locali disponibili impressionano con i loro piani ben pensati, i salotti luminosi e un livello di costruzione elevato. Gli spazi di vita e di pranzo spaziosi incontrano zone di ritiro chiaramente definite, creando un'atmosfera di vita piacevole per le coppie o le persone sole con una pretesa di qualità e comfort.Gli appartamenti in affitto impressionano con un livello di proprietario occupante elevato :<ul><li>Spazio di vita e di pranzo con cucina aperta</li><li>Cucina con piano di cottura a induzione, forno, cuocitrice a vapore, lavastoviglie, frigorifero e congelatore</li><li>Due celle umide (bagno/WC e doccia/WC)</li><li>Torre di lavanderia nell'appartamento</li><li>Armadi a muro nell'ingresso</li><li>Balcone e area di seduta con giardino privato spazioso</li><li>Compartimento di cantina privato</li><li>Ascensore</li></ul>La visita virtuale 360° serve a illustrare il livello di costruzione e mostra un appartamento al 4° piano - si prega di notare il piano dell'appartamento.Il complesso residenziale è progettato come uno spazio di vita calmo e verde. Gli spazi esterni spaziosi, un ruscello e zone di incontro senza auto creano un livello di vita elevato e offrono uno spazio di relax. Allo stesso tempo, il progetto risponde alle esigenze moderne in materia di vita sostenibile e risparmio energetico con la norma Minergie, la pompa di calore a sonda di terra e il sistema solare.Reinach nel Wynetal combina la vita calma nel verde con un'infrastruttura eccellente. Le possibilità di shopping nel centro del villaggio e le scuole sono a distanza di cammino confortevole. La fermata dell'autobus più vicina è a circa 500 metri, mentre la stazione di Reinach AG Nord è a circa 10 minuti a piedi. Grazie ai buoni trasporti pubblici, i centri di Aarau e Lucerna possono essere raggiunti rapidamente. Questa localizzazione residenziale è ideale per tutti coloro che vogliono combinare il relax basato sulla natura con una grande praticità quotidiana.Visita il nostro sito web per ulteriori informazioni e per candidarti al tuo appartamento desiderato: www.wyna-mieten.chGli appartamenti della Casa 15 sono disponibili per una visita immediata. Sei interessato? Allora ci auguriamo il tuo contatto.",
+           "title": "Primo affitto Wyna – Dove la vita moderna incontra momenti di giardino spaziosi"
+          }
+         },
+         "primary": "de",
+         "en": {
+          "attachments": [],
+          "text": {
+           "description": "At Lenzstrasse 13–19 in Reinach AG, the \"Wyna\" is being built as a sustainably designed residential complex with modern rental apartments for different life phases and requirements. The apartments in House 15 will be ready for occupancy on October 1, 2026, and mark the beginning of a phased first rental.The six available 3.5-room apartments impress with well-thought-out floor plans, bright living rooms, and a high standard of construction. Spacious living and dining areas meet clearly zoned retreat areas, creating a pleasant living atmosphere for couples or single people with a claim to quality and comfort.The rental apartments impress with a high owner-occupier standard:<ul><li>Living and dining area with open kitchen</li><li>Kitchen with induction cooktop, oven, steam cooker, dishwasher, refrigerator, and freezer</li><li>Two wet cells (bathroom/WC and shower/WC)</li><li>Laundry tower in the apartment</li><li>Built-in closets in the entrance area</li><li>Balcony and seating area with spacious private garden</li><li>Private basement compartment</li><li>Elevator</li></ul>The virtual 360° tour serves to illustrate the standard of construction and shows an apartment on the 4th floor - please note the floor plan.The residential complex is designed as a quiet and green living space. Spacious outdoor areas, a stream, and car-free meeting zones create a high quality of living and offer space for relaxation. At the same time, the project meets modern requirements for sustainable and energy-efficient living with the Minergie standard, earth probe heat pump, and solar system.Reinach in the Wynetal combines quiet living in the green with an excellent infrastructure. Shopping opportunities in the village center and schools are within comfortable walking distance. The next bus stop can be reached after about 500 meters, while the Reinach AG Nord train station is only about 10 minutes' walk away. Thanks to the good transport links, the centers of Aarau and Lucerne can also be reached quickly. This residential location is ideal for all those who want to combine nature-based relaxation with high everyday practicality.Visit our website for more information and to apply for your desired apartment: www.wyna-mieten.chThe apartments in House 15 are available for viewing immediately. Are you interested? Then we look forward to your contact.",
+           "title": "First rental Wyna – Where modern living meets spacious garden moments"
+          },
+          "isMachineTranslated": true
+         }
+        },
+        "meta": {
+         "createdAt": "2026-07-21T15:24:45.072Z"
+        },
+        "offerType": "RENT",
+        "platforms": [
+         "homegate",
+         "immoscout24",
+         "alleimmobilien",
+         "home",
+         "immostreet",
+         "anibis",
+         "tutti"
+        ],
+        "prices": {
+         "currency": "CHF",
+         "rent": {
+          "extra": 290,
+          "net": 2130,
+          "gross": 2420,
+          "interval": "MONTH"
+         },
+         "buy": {}
+        }
+       },
+       "listingCard": {
+        "size": "L"
+       },
+       "listingScores": {
+        "listingCompletenessScore": 14,
+        "packageScore": 14
+       },
+       "newConstructionData": {
+        "projectUrl": "https://www.wyna-mieten.ch/",
+        "projectType": "NEW_CONSTRUCTION_LIGHT"
+       },
+       "listerBranding": {
+        "logoUrl": "https://cdn.immoscout24.ch/t_customer_logo/logos/397716-A-L397716-R.jpg",
+        "isQualityPartner": false,
+        "subscriptionType": "Silver",
+        "isPremiumBranding": false,
+        "basePackage": "RE_SILVER"
+       }
+      },
+      {
+       "listingType": {
+        "type": "PREMIUM"
+       },
+       "id": "4003347355",
+       "listing": {
+        "address": {
+         "geoCoordinates": {
+          "accuracy": "HIGH",
+          "latitude": 47.315365892069,
+          "longitude": 8.360968811982
+         },
+         "geoTags": [
+          "geo-canton-aargau",
+          "geo-country-switzerland",
+          "geo-region-muri",
+          "geo-city-rottenschwil",
+          "geo-zipcode-8919"
+         ],
+         "locality": "Rottenschwil",
+         "postalCode": "8919",
+         "street": "Rütimattenstrasse 7",
+         "region": "AG"
+        },
+        "categories": [
+         "APARTMENT",
+         "FLAT"
+        ],
+        "characteristics": {
+         "hasBalcony": true,
+         "hasElevator": true,
+         "floor": 0,
+         "numberOfRooms": 3.5,
+         "livingSpace": 100,
+         "hasParking": true,
+         "isQuiet": true,
+         "hasGarage": true,
+         "hasCableTv": true,
+         "isNewBuilding": true,
+         "numberOfBathrooms": 2,
+         "yearBuilt": 2026,
+         "hasDishwasher": true,
+         "hasWashingMachine": true
+        },
+        "id": "4003347355",
+        "localization": {
+         "de": {
+          "urls": [
+           {
+            "type": "LINK",
+            "title": "Immo-Küng GmbH",
+            "value": "https://www.immo-kueng.ch"
+           }
+          ],
+          "isMachineTranslated": false,
+          "attachments": [
+           {
+            "alt": null,
+            "file": "b096dcd3cd.jpg",
+            "metadata": {
+             "byteSize": 294329,
+             "checksum": {
+              "algorithm": "SHA256",
+              "value": "049e1cd19733ea21c8fd9f45acc78d1440f7e1871b722d591c0810889737db5a"
+             },
+             "image": {
+              "height": 1000,
+              "width": 1500
+             },
+             "contentType": "image/jpeg"
+            },
+            "caption": "Baufortschritt Ende Juli 2026",
+            "type": "IMAGE",
+            "url": "https://cdn.immoscout24.ch/listings/v2/chpi/4003347355/image/49de99a03f63e6a67d3607c913d75720.jpg"
+           },
+           {
+            "metadata": {
+             "image": {
+              "width": 1500,
+              "height": 999
+             },
+             "contentType": "image/jpeg",
+             "byteSize": 353604,
+             "checksum": {
+              "algorithm": "SHA256",
+              "value": "736609235d5c9fb0b44c39cf99e7bcbd6086952ddbd3a8c52dbdefb08c7ea249"
+             }
+            },
+            "type": "IMAGE",
+            "caption": "Blick auf Rottenschwil",
+            "file": "e163b54ddb.jpg",
+            "url": "https://cdn.immoscout24.ch/listings/v2/chpi/4003347355/image/355f8bef36afe68470835daeed86fa44.jpg",
+            "alt": null
+           },
+           {
+            "file": "2fde6cc2d7.jpg",
+            "metadata": {
+             "contentType": "image/jpeg",
+             "checksum": {
+              "algorithm": "SHA256",
+              "value": "5a6b38bab9aa630cd4ed33ac952771f783696342273f26fa989deb211339f1ea"
+             },
+             "image": {
+              "height": 1060,
+              "width": 1500
+             },
+             "byteSize": 307998
+            },
+            "alt": null,
+            "caption": "Visualisierung Projekt \"Flachsee\"",
+            "type": "IMAGE",
+            "url": "https://cdn.immoscout24.ch/listings/v2/chpi/4003347355/image/67b6622a86d0e1ab08b98023ae56dc11.jpg"
+           },
+           {
+            "url": "https://cdn.immoscout24.ch/listings/v2/chpi/4003347355/image/323625efd97c3f8ed7c5de3e1421fc8b.jpg",
+            "file": "60594ce9c2.jpg",
+            "alt": null,
+            "type": "IMAGE",
+            "caption": "Baufortschritt Ende Juli 2026",
+            "metadata": {
+             "byteSize": 223590,
+             "contentType": "image/jpeg",
+             "checksum": {
+              "algorithm": "SHA256",
+              "value": "ecc5f036e816f3e378c5b998caff857f15ddacfd400956101587d1a45da906b2"
+             },
+             "image": {
+              "height": 1000,
+              "width": 1500
+             }
+            }
+           },
+           {
+            "file": "cfd9d7d914.jpg",
+            "alt": null,
+            "metadata": {
+             "contentType": "image/jpeg",
+             "byteSize": 165709,
+             "checksum": {
+              "value": "097442c67cdee2cb00d37a2d61268f8dd5eb45574994dfac832286f02c8f050f",
+              "algorithm": "SHA256"
+             },
+             "image": {
+              "height": 999,
+              "width": 1500
+             }
+            },
+            "caption": "Natur vor der Haustüre",
+            "type": "IMAGE",
+            "url": "https://cdn.immoscout24.ch/listings/v2/chpi/4003347355/image/2768ea1d10a1098018f9a700ac4f76ed.jpg"
+           },
+           {
+            "metadata": {
+             "checksum": {
+              "value": "70dc98487c52274b4be20fb89d4bb6ffa32ac54bb0ff111e29292717c2aef8a6",
+              "algorithm": "SHA256"
+             },
+             "contentType": "image/jpeg",
+             "image": {
+              "width": 1500,
+              "height": 1060
+             },
+             "byteSize": 459999
+            },
+            "alt": null,
+            "file": "1efd93d131.jpg",
+            "type": "IMAGE",
+            "url": "https://cdn.immoscout24.ch/listings/v2/chpi/4003347355/image/00f723984d51517d54b1592ca223c891.jpg",
+            "caption": "Visualisierung Projekt \"Flachsee\""
+           },
+           {
+            "file": "9e2d291cd7.jpg",
+            "type": "IMAGE",
+            "caption": "Baufortschritt Ende Juli 2026",
+            "alt": null,
+            "metadata": {
+             "contentType": "image/jpeg",
+             "image": {
+              "width": 1500,
+              "height": 999
+             },
+             "byteSize": 221754,
+             "checksum": {
+              "value": "89cd29381046422945fcb09a606fcc0238502d51e1fff8825fa50ed2789e99aa",
+              "algorithm": "SHA256"
+             }
+            },
+            "url": "https://cdn.immoscout24.ch/listings/v2/chpi/4003347355/image/106ce395d79363c205bdd8c9aad48917.jpg"
+           },
+           {
+            "url": "https://cdn.immoscout24.ch/listings/v2/chpi/4003347355/image/8e4df03b0295e49a8aa8f7603ac11b04.jpg",
+            "metadata": {
+             "checksum": {
+              "value": "317933a7b489b95f0a1c0df37f767e9b22f564f94b546aa06bd07e575cff0488",
+              "algorithm": "SHA256"
+             },
+             "contentType": "image/jpeg",
+             "byteSize": 288282,
+             "image": {
+              "width": 1500,
+              "height": 1060
+             }
+            },
+            "type": "IMAGE",
+            "alt": null,
+            "caption": "Visualisierung Projekt \"Flachsee\"",
+            "file": "4f5d1851dc.jpg"
+           },
+           {
+            "file": "1) Wohnung 1.2 - Grundriss.pdf",
+            "type": "DOCUMENT",
+            "url": "https://cdn.immoscout24.ch/listings/v2/chpi/4003347355/document/7c850bcdb663ce1099f97e03889f36f4.pdf",
+            "title": "Grundriss Wohnung 1.2",
+            "metadata": {
+             "contentType": "application/pdf",
+             "byteSize": 1348279,
+             "checksum": {
+              "value": "c33fa844e7349302af3a54e37343b6bcb01912617545f87f020c5dd363188276",
+              "algorithm": "SHA256"
+             }
+            },
+            "attachmentAnnotation": {
+             "document": {
+              "floorPlan": {
+               "confidence": "medium"
+              }
+             }
+            }
+           }
+          ],
+          "text": {
+           "description": "Die 3.5 Zimmer Wohnung – Teil eines neuen Mehrfamilienhauses mit acht Wohnungen – befindet sich in der ländlich geprägten Gemeinde Rottenschwil – angrenzend zur Landwirtschaftszone – mit der Natur vor der Haustüre und bevorzugter Südausrichtung. Die Wohnung besticht durch ihren zeitlosen sowie hochwertigen Ausbau und ihre Grosszügigkeit in sämtlichen Belangen. Ein weiteres Highlight ist die Nähe zur Bushaltestelle – mit dem Postauto sind Zürich (Triemli), Birmensdorf sowie Muri ohne Umsteigen erreichbar.Facts &amp; Highlights<ul><li>Grosszügige Flächen &amp; intelligente Raumaufteilung</li><li>Nettowohnfläche: 100.15 m²</li><li>Zwei hochwertige Badezimmer</li><li>Lichtdurchfluteter Wohn- und Essbereich mit offener Küche</li><li>Funktionales Réduit mit Waschturm</li><li>Stattlicher Balkon mit 29 m² und Aussenréduit</li><li>Gartenanteil mit 18 m²</li><li>Kellerraum mit 11 m²</li></ul>Mietpreise<ul><li>Miete netto CHF 2'070.-</li><li>2 Einstellplätze à CHF 140.-</li><li>Nebenkosten à Konto CHF 260.-</li><li>Total CHF 2'610.-</li></ul>Für weitere Informationen oder eine Besichtigung stehen wir Ihnen gerne zur Verfügung. Wir freuen uns auf Ihre Kontaktaufnahme.",
+           "title": "Attraktive Wohnung im Freiämter Naturparadies am Zonenrand (Erstbezug)"
+          }
+         },
+         "fr": {
+          "isMachineTranslated": true,
+          "text": {
+           "description": "L'appartement de 3,5 pièces – partie d'une nouvelle maison multifamiliale avec huit appartements – est situé dans la commune rurale de Rottenschwil – adjacente à la zone agricole – avec la nature juste à l'extérieur de la porte d'entrée et une orientation sud préférée. L'appartement impressionne par sa construction intemporelle et de haute qualité ainsi que par sa générosité dans tous les aspects. Un autre point fort est la proximité de l'arrêt de bus – avec le bus postal, Zurich (Triemli), Birmensdorf et Muri peuvent être atteints sans changement de train.Faits &amp; Highlights<ul><li>Superficie spacieuse &amp; répartition intelligente des pièces</li><li>Superficie habitable nette : 100,15 m²</li><li>Deux salles de bains de haute qualité</li><li>Séjour et salle à manger lumineux avec cuisine ouverte</li><li>Réduit fonctionnel avec tour de lavage</li><li>Balcon spacieux avec 29 m² et réduit extérieur</li><li>Part de jardin avec 18 m²</li><li>Pièce du sous-sol avec 11 m²</li></ul>Prix de location<ul><li>Loyer net CHF 2'070.-</li><li>2 places de parking à CHF 140.-</li><li>Frais accessoires à compte CHF 260.-</li><li>Total CHF 2'610.-</li></ul>Pour plus d'informations ou une visite, nous sommes à votre disposition. Nous nous réjouissons de votre contact.",
+           "title": "Appartement attractif dans le paradis naturel de Freiämter à la limite des zones (premier occupant)"
+          },
+          "attachments": []
+         },
+         "it": {
+          "attachments": [],
+          "isMachineTranslated": true,
+          "text": {
+           "description": "L'appartamento di 3,5 locali – parte di una nuova casa multifamiliare con otto appartamenti – si trova nel comune rurale di Rottenschwil – adiacente alla zona agricola – con la natura proprio fuori dalla porta d'ingresso e un'esposizione a sud preferita. L'appartamento colpisce per la sua costruzione senza tempo e di alta qualità e per la sua generosità in tutti gli aspetti. Un altro punto di forza è la vicinanza alla fermata dell'autobus – con il bus postale, Zurigo (Triemli), Birmensdorf e Muri possono essere raggiunti senza cambiare treno.Fatti &amp; Highlights<ul><li>Superficie spaziosa &amp; ripartizione intelligente degli ambienti</li><li>Superficie abitabile netta: 100,15 m²</li><li>Due bagni di alta qualità</li><li>Soggiorno e sala da pranzo luminosi con cucina aperta</li><li>Réduit funzionale con torre di lavaggio</li><li>Balcone spazioso con 29 m² e réduit esterno</li><li>Parte di giardino con 18 m²</li><li>Locale del seminterrato con 11 m²</li></ul>Prezzi di affitto<ul><li>Affitto netto CHF 2'070.-</li><li>2 posti auto a CHF 140.-</li><li>Spese accessorie a carico CHF 260.-</li><li>Totale CHF 2'610.-</li></ul>Per ulteriori informazioni o una visita, siamo a vostra disposizione. Ci auguriamo del vostro contatto.",
+           "title": "Appartamento attraente nel paradiso naturale di Freiämter sul confine delle zone (primo occupante)"
+          }
+         },
+         "en": {
+          "isMachineTranslated": true,
+          "text": {
+           "description": "The 3.5 room apartment – part of a new multi-family house with eight apartments – is located in the rural municipality of Rottenschwil – adjacent to the agricultural zone – with nature right outside the front door and a preferred south-facing orientation. The apartment impresses with its timeless and high-quality construction and its generosity in all aspects. Another highlight is the proximity to the bus stop – with the post bus, Zurich (Triemli), Birmensdorf, and Muri can be reached without changing trains.Facts &amp; Highlights<ul><li>Spacious areas &amp; intelligent room layout</li><li>Net living area: 100.15 m²</li><li>Two high-quality bathrooms</li><li>Bright living and dining area with open kitchen</li><li>Functional réduit with washing tower</li><li>Stately balcony with 29 m² and outdoor réduit</li><li>Garden share with 18 m²</li><li>Basement room with 11 m²</li></ul>Rent prices<ul><li>Net rent CHF 2,070.-</li><li>2 parking spaces at CHF 140.-</li><li>Ancillary costs to account CHF 260.-</li><li>Total CHF 2,610.-</li></ul>For further information or a viewing, we are at your disposal. We look forward to your contact.",
+           "title": "Attractive apartment in the Freiämter nature paradise on the zoning border (first occupancy)"
+          },
+          "attachments": []
+         },
+         "primary": "de"
+        },
+        "meta": {
+         "createdAt": "2026-07-29T12:25:27.111Z"
+        },
+        "offerType": "RENT",
+        "platforms": [
+         "homegate",
+         "immoscout24",
+         "alleimmobilien",
+         "home",
+         "immostreet",
+         "anibis",
+         "tutti",
+         "flatfox"
+        ],
+        "prices": {
+         "buy": {},
+         "rent": {
+          "interval": "MONTH",
+          "extra": 260,
+          "net": 2070,
+          "gross": 2330
+         },
+         "currency": "CHF"
+        }
+       },
+       "listingCard": {
+        "size": "L"
+       },
+       "listingScores": {
+        "listingCompletenessScore": 12,
+        "packageScore": 14
+       },
+       "newConstructionData": {
+        "projectUrl": "https://www.immo-kueng.ch",
+        "projectType": "NEW_CONSTRUCTION_LIGHT"
+       },
+       "listerBranding": {
+        "logoUrl": "https://cdn.immoscout24.ch/t_customer_logo/logos/l_chpi_v1.png",
+        "isQualityPartner": false,
+        "subscriptionType": "Silver",
+        "isPremiumBranding": true,
+        "basePackage": "RE_SILVER"
+       }
+      },
+      {
+       "listingType": {
+        "type": "PREMIUM"
+       },
+       "id": "4003365055",
+       "listing": {
+        "address": {
+         "geoCoordinates": {
+          "longitude": 8.042114811985,
+          "latitude": 47.284444892067,
+          "accuracy": "HIGH"
+         },
+         "geoTags": [
+          "geo-canton-aargau",
+          "geo-country-switzerland",
+          "geo-zipcode-5053",
+          "geo-region-zofingen",
+          "geo-city-staffelbach"
+         ],
+         "locality": "Staffelbach",
+         "postalCode": "5053",
+         "street": "Obstweg 1&3",
+         "region": "AG"
+        },
+        "categories": [
+         "APARTMENT",
+         "FLAT"
+        ],
+        "characteristics": {
+         "hasBalcony": true,
+         "numberOfBathrooms": 1,
+         "hasGarage": true,
+         "arePetsAllowed": true,
+         "hasCableTv": true,
+         "yearBuilt": 2026,
+         "hasWashingMachine": true,
+         "numberOfRooms": 3.5,
+         "isChildFriendly": true,
+         "isNewBuilding": true,
+         "hasNiceView": true,
+         "isQuiet": true,
+         "hasDishwasher": true,
+         "floor": 1,
+         "livingSpace": 79,
+         "hasElevator": true
+        },
+        "id": "4003365055",
+        "localization": {
+         "primary": "de",
+         "en": {
+          "attachments": [],
+          "text": {
+           "description": "Welcome to your new home! These charming 3.5-room apartments on the 1st floor (rent from CHF 2000.00) of a modern new building complex in Staffelbach combine modern living with rural idyll. The apartment can be occupied from October 1, 2026.The modern residential complex with several buildings is embedded in green spaces and hills - a real eye-catcher and a place to feel good.The apartment offers the following highlights:<ul><li>Spacious living area with modern floor plan (areas 79 m² - 83 m²)</li><li>Open kitchen: Equipped with high-quality appliances in a stylish way.</li><li>Modern bathroom: Spacious shower with glass partition and separate washing tower.</li><li>Flooring: High-quality vinyl flooring for easy maintenance and attractive optics.</li><li>Storage space: Built-in wardrobe and cloakroom in the corridor, practical storage room on the terrace.</li><li>Seating area/balcony: 20 m² for relaxing moments with a beautiful view</li><li>Garage: Parking spaces with direct access to the property.</li><li>Environment: Meeting area with green space in the inner courtyard</li><li>Pets allowed: Your four-legged friends are welcome.</li></ul>Sunshine and tranquility: The apartment benefits from plenty of sunshine in the summer and is pleasantly quiet all year round - both during the day and at night.Location and surroundings:The apartment is located in a quiet and child-friendly environment. The complex is surrounded by well-maintained green spaces and offers a picturesque view of the Aargau landscape. A river is nearby and invites you to take walks.<ul><li>Volg Staffelbach: Only 2 minutes' walk away - daily shopping made easy.</li><li>Bus stop Staffelbach Gemeindehaus: Can be reached on foot in just 2 minutes.</li><li>Primary school Staffelbach: Only 3 minutes' walk away - ideal for families with children.</li></ul>These apartments combine modern living comfort with rural idyll and are ideal for couples or single people who appreciate the quiet village life in Staffelbach. Secure your new home now!Have we sparked your interest? Please contact us. We look forward to hearing from you.",
+           "title": "First rental! Your sunny home in autumn?"
+          },
+          "isMachineTranslated": true
+         },
+         "de": {
+          "attachments": [
+           {
+            "alt": null,
+            "type": "IMAGE",
+            "metadata": {
+             "checksum": {
+              "algorithm": "SHA256",
+              "value": "26bc8422330917754e9515d7d8ebc412b50f7ecb301384aeccb67e648ea89935"
+             },
+             "image": {
+              "width": 1500,
+              "height": 843
+             },
+             "contentType": "image/jpeg",
+             "byteSize": 322923
+            },
+            "url": "https://cdn.immoscout24.ch/listings/v2/s153/4003365055/image/cd642ed93c9e1605dcc046cd6b88ba3e.jpg",
+            "file": "cf4a6bdefc.jpg"
+           },
+           {
+            "alt": null,
+            "type": "IMAGE",
+            "file": "871e0ba622.jpg",
+            "metadata": {
+             "contentType": "image/jpeg",
+             "byteSize": 259225,
+             "image": {
+              "width": 1500,
+              "height": 843
+             },
+             "checksum": {
+              "value": "aef50ac146b53e6b4cdd197aac7d0514e8f8a48f3f0112ae4008842c05c35919",
+              "algorithm": "SHA256"
+             }
+            },
+            "url": "https://cdn.immoscout24.ch/listings/v2/s153/4003365055/image/31d26faa168be99780a819a8a254234d.jpg"
+           },
+           {
+            "metadata": {
+             "checksum": {
+              "algorithm": "SHA256",
+              "value": "920f4f6b3c581a2d6552a4e6238b1554adde5bbd0031d05ea97554c5233a2651"
+             },
+             "contentType": "image/jpeg",
+             "byteSize": 150959,
+             "image": {
+              "height": 843,
+              "width": 1500
+             }
+            },
+            "url": "https://cdn.immoscout24.ch/listings/v2/s153/4003365055/image/c12a993a72bf3c45758a5642cfbbf850.jpg",
+            "alt": null,
+            "file": "cf66022f50.jpg",
+            "type": "IMAGE"
+           },
+           {
+            "alt": null,
+            "url": "https://cdn.immoscout24.ch/listings/v2/s153/4003365055/image/a44706dc205fd976ab0082db1143afdb.jpg",
+            "file": "091775c5fd.jpg",
+            "metadata": {
+             "checksum": {
+              "value": "69ca5a94a07e21c5310ee40ba29e097cfde5c72fca72a4837fc09e2699c6c2d3",
+              "algorithm": "SHA256"
+             },
+             "contentType": "image/jpeg",
+             "byteSize": 178199,
+             "image": {
+              "height": 843,
+              "width": 1500
+             }
+            },
+            "type": "IMAGE"
+           },
+           {
+            "file": "107_A_103_Ebene 0_1-50_rl.pdf",
+            "metadata": {
+             "byteSize": 112161,
+             "checksum": {
+              "algorithm": "SHA256",
+              "value": "e06a81a5b6363ef717a53af5a1fa1fe6a79ea9d314114689341f1cb830b78b8a"
+             },
+             "contentType": "application/pdf"
+            },
+            "type": "DOCUMENT",
+            "url": "https://cdn.immoscout24.ch/listings/v2/s153/4003365055/document/a3c157bd494dab71ab16d6deecf9d0ef.pdf"
+           },
+           {
+            "type": "DOCUMENT",
+            "metadata": {
+             "contentType": "application/pdf",
+             "byteSize": 132469,
+             "checksum": {
+              "value": "9c0d718be45296375e9e0b6e90c7eb5d98ae83b93a149e3eddaa34a9c1b8d454",
+              "algorithm": "SHA256"
+             }
+            },
+            "url": "https://cdn.immoscout24.ch/listings/v2/s153/4003365055/document/db4e81837944d0eb5bc684a93c096834.pdf",
+            "file": "107_B_103_Ebene 0_1-50_rl.pdf"
+           }
+          ],
+          "isMachineTranslated": false,
+          "urls": [],
+          "text": {
+           "description": "Willkommen in Ihrem neuen Zuhause! Diese charmanten 3.5-Zimmer-Wohnungen im  1. Obergeschoss (Mietzins Brutto ab Fr. 2000.00) eines modernen Neubaukomplexes in Staffelbach vereint zeitgemässes Wohnen mit ländlicher Idylle. Der Bezug ist ab dem 1. Oktober 2026 möglich.Der moderne Wohnkomplex mit mehreren Gebäuden liegt eingebettet in Grünflächen und Hügeln – ein echter Blickfang und ein Ort zum Wohlfühlen.Die Wohnung bietet folgende Highlights:<ul><li>Grosszügige Wohnfläche mit modernem Grundriss (Flächen 79 m² - 83 m²)</li><li>Offene Küche: Mit hochwertigen Geräten stilvoll ausgestattet.</li><li>Modernes Badezimmer: Grosszügige Dusche mit Glastrennwand und eigenem Waschturm.</li><li>Bodenbeläge: Hochwertiger Vinylboden für einfaches Pflegen und ansprechende Optik.</li><li>Stauraum: Einbauschrank und Garderobe im Korridor, praktisches Reduit auf der Terrasse.</li><li>Sitzplatz/Balkon: 20 m² für erholsame Moment mit schöner Aussicht</li><li>Garage: Einstellhallenplätze mit direktem Zugang zur Liegenschaft.</li><li>Umgebung: Begegnungszone mit Grünfläche im Innenhofe</li><li>Haustiere erlaubt: Ihre Vierbeiner sind herzlich willkommen.</li></ul>Sonnenverhältnisse &amp; Ruhe: Die Wohnung profitiert im Sommer von viel Sonne und ist das ganze Jahr über angenehm ruhig – sowohl tagsüber als auch nachts.Lage und Umgebung:Die Wohnung liegt in einer ruhigen und kinderfreundlichen Umgebung. Die Anlage ist von gepflegten Grünflächen umgeben und bietet einen malerischen Blick auf die Aargauer Landschaft. Ein Fluss befindet sich in der Nähe und lädt zu Spaziergängen ein.<ul><li>Volg Staffelbach: Nur 2 Gehminuten entfernt – tägliche Einkäufe leicht gemacht.</li><li>Bushaltestelle Staffelbach Gemeindehaus: In nur 2 Minuten zu Fuss erreichbar.</li><li>Primarschule Staffelbach: Nur 3 Gehminuten entfernt – ideal für Familien mit Kindern.</li></ul>Diese Wohnungen vereinen modernen Wohnkomfort mit ländlicher Idylle und ist ideal für Paare oder Einzelpersonen, die das ruhige Dorfleben in Staffelbach schätzen. Sichern Sie sich jetzt Ihr neues Zuhause!Haben wir Ihr Interesse geweckt? Nehmen Sie doch mit uns Kontakt auf. Wir freuen uns auf Sie.",
+           "title": "Erstvermietung!  Ihr sonniges Zuhause im Herbst?"
+          }
+         },
+         "fr": {
+          "isMachineTranslated": true,
+          "attachments": [],
+          "text": {
+           "title": "Première location ! Votre maison ensoleillée à l'automne ?",
+           "description": "Bienvenue dans votre nouvelle maison ! Ces appartements charmants de 3,5 pièces au 1er étage (loyer à partir de 2000,00 CHF) d'un complexe immobilier moderne à Staffelbach allient vie moderne et idylle rurale. L'appartement peut être occupé à partir du 1er octobre 2026.Le complexe résidentiel moderne avec plusieurs bâtiments est niché dans des espaces verts et des collines - un véritable joyau et un endroit où l'on se sent bien.L'appartement offre les points forts suivants :<ul><li>Espace de vie spacieux avec plan d'étage moderne (surfaces 79 m² - 83 m²)</li><li>Cuisine ouverte : Équipée d'appareils de haute qualité de manière élégante.</li><li>Salle de bain moderne : Douche spacieuse avec paroi en verre et tour de lavage séparée.</li><li>Sol : Sol en vinyle de haute qualité pour un entretien facile et une optique attrayante.</li><li>Espace de stockage : Placard intégré et vestiaire dans le couloir, espace de stockage pratique sur la terrasse.</li><li>Espace de détente/balcon : 20 m² pour des moments de détente avec une belle vue</li><li>Garage : Places de parking avec accès direct à la propriété.</li><li>Environnement : Espace de rencontre avec espace vert dans la cour intérieure</li><li>Animaux de compagnie autorisés : Vos amis à quatre pattes sont les bienvenus.</li></ul>Soleil et tranquillité : L'appartement bénéficie d'un ensoleillement abondant en été et est agréablement calme tout au long de l'année - tant pendant la journée que la nuit.Emplacement et environnement :L'appartement est situé dans un environnement calme et propice aux enfants. Le complexe est entouré d'espaces verts bien entretenus et offre une vue pittoresque sur le paysage d'Aargau. Une rivière est à proximité et invite à se promener.<ul><li>Volg Staffelbach : À seulement 2 minutes à pied - les courses quotidiennes sont faciles.</li><li>Arrêt de bus Staffelbach Gemeindehaus : Accessible à pied en seulement 2 minutes.</li><li>École primaire Staffelbach : À seulement 3 minutes à pied - idéal pour les familles avec des enfants.</li></ul>Ces appartements allient confort de vie moderne et idylle rurale et sont idéaux pour les couples ou les personnes seules qui apprécient la vie villageoise calme à Staffelbach. Sécurisez votre nouvelle maison maintenant !"
+          }
+         },
+         "it": {
+          "text": {
+           "title": "Prima affitto! La tua casa soleggiata in autunno?",
+           "description": "Benvenuti nella vostra nuova casa! Questi appartamenti di 3,5 locali al 1° piano (affitto da 2000,00 CHF) di un complesso immobiliare moderno a Staffelbach combinano vita moderna e idillio rurale. L'appartamento può essere occupato dal 1° ottobre 2026.Il complesso residenziale moderno con più edifici è immerso in spazi verdi e colline - un vero e proprio gioiello e un luogo dove ci si sente bene.L'appartamento offre i seguenti punti di forza:<ul><li>Ampio spazio abitativo con piano moderno (superficie 79 m² - 83 m²)</li><li>Cucina aperta: Dotata di elettrodomestici di alta qualità in modo elegante.</li><li>Bagno moderno: Ampia doccia con parete in vetro e torre di lavaggio separata.</li><li>Pavimento: Pavimento in vinile di alta qualità per una manutenzione facile e un'ottica attraente.</li><li>Spazio di stoccaggio: Armadio incorporato e guardaroba nel corridoio, spazio di stoccaggio pratico sulla terrazza.</li><li>Area di seduta/balcone: 20 m² per momenti di relax con una bella vista</li><li>Garage: Posti auto con accesso diretto alla proprietà.</li><li>Ambiente: Area di incontro con spazio verde nel cortile interno</li><li>Animali domestici ammessi: I vostri amici a quattro zampe sono benvenuti.</li></ul>Sole e tranquillità: L'appartamento beneficia di molto sole in estate e è piacevolmente tranquillo tutto l'anno - sia di giorno che di notte.Posizione e ambiente:L'appartamento si trova in un ambiente tranquillo e adatto ai bambini. Il complesso è circondato da spazi verdi ben curati e offre una vista pittoresca sulla campagna dell'Aargau. Un fiume è nelle vicinanze e invita a fare passeggiate.<ul><li>Volg Staffelbach: A soli 2 minuti a piedi - le spese quotidiane sono facili.</li><li>Fermata dell'autobus Staffelbach Gemeindehaus: Accessibile a piedi in soli 2 minuti.</li><li>Scuola elementare Staffelbach: A soli 3 minuti a piedi - ideale per le famiglie con bambini.</li></ul>Questi appartamenti combinano comfort di vita moderno e idillio rurale e sono ideali per le coppie o le persone sole che apprezzano la vita tranquilla del villaggio a Staffelbach. Assicuratevi la vostra nuova casa ora!"
+          },
+          "attachments": [],
+          "isMachineTranslated": true
+         }
+        },
+        "meta": {
+         "createdAt": "2026-08-06T10:34:01.813Z"
+        },
+        "offerType": "RENT",
+        "platforms": [
+         "homegate",
+         "immoscout24",
+         "alleimmobilien",
+         "home",
+         "immostreet",
+         "anibis",
+         "tutti",
+         "flatfox"
+        ],
+        "prices": {
+         "buy": {},
+         "rent": {
+          "gross": 2000,
+          "interval": "MONTH"
+         },
+         "currency": "CHF"
+        }
+       },
+       "listingCard": {
+        "size": "L"
+       },
+       "listingScores": {
+        "packageScore": 14,
+        "listingCompletenessScore": 11
+       },
+       "newConstructionData": {
+        "projectType": "NEW_CONSTRUCTION_LIGHT"
+       },
+       "listerBranding": {
+        "logoUrl": "https://cdn.immoscout24.ch/t_customer_logo/logos/l_s153_v1.png",
+        "isQualityPartner": false,
+        "subscriptionType": "Silver",
+        "isPremiumBranding": false,
+        "basePackage": "RE_SILVER"
+       }
+      },
+      {
+       "listingType": {
+        "type": "PREMIUM"
+       },
+       "id": "4003327896",
+       "listing": {
+        "address": {
+         "geoCoordinates": {
+          "accuracy": "HIGH",
+          "longitude": 8.087744811984,
+          "latitude": 47.477254892067
+         },
+         "geoTags": [
+          "geo-canton-aargau",
+          "geo-country-switzerland",
+          "geo-city-zeihen",
+          "geo-zipcode-5079",
+          "geo-region-laufenburg"
+         ],
+         "locality": "Zeihen",
+         "postalCode": "5079",
+         "street": "Hohbächli 3a",
+         "region": "AG"
+        },
+        "categories": [
+         "APARTMENT",
+         "FLAT"
+        ],
+        "characteristics": {
+         "isNewBuilding": true,
+         "numberOfBathrooms": 1,
+         "hasElevator": true,
+         "livingSpace": 95,
+         "numberOfRooms": 3.5,
+         "yearBuilt": 2025,
+         "isQuiet": true,
+         "hasWashingMachine": true,
+         "hasTumbleDryer": true,
+         "isSunny": true,
+         "floor": 0,
+         "isChildFriendly": true
+        },
+        "id": "4003327896",
+        "localization": {
+         "de": {
+          "text": {
+           "title": "Exklusive 3.5-Zimmerwohnungen",
+           "description": "19 wunderschöne Wohnungen, verteilt auf zwei Häuser, liegen an bester Lage in Zeihen und lassen den Mietern keine Wünsche offen.Wohnung:<ul><li>grosse, lichtdurchflutete Räume</li><li>Parkettboden in sämtlichen Wohnräumen</li><li>Küche mit hochwertigen Geräten</li><li>eigener Waschturm mit Waschmaschine und Tumbler</li><li>grosszügiger Sitzplatz</li></ul>Wohnlage:<ul><li>nahe Einkaufsmöglichkeit</li><li>nahe Bushaltestelle</li><li>ruhige Lage </li></ul>Die Fotos stammen aus einer Musterwohnung in derselben Überbauung.Ein Einstellhallenplatz kann für mtl. CHF 150.00 dazu gemietet werden.Den ersten Nettomietzins schenken wir Ihnen.Haben wir Ihr Interesse geweckt? Dann zögern Sie keine Sekunde und kontaktieren Sie uns unter der Nummer 062 791 18 90. "
+          },
+          "isMachineTranslated": false,
+          "attachments": [
+           {
+            "file": "509ada4b76ce41d05ef53087b82a3338.jpeg",
+            "metadata": {
+             "byteSize": 94435,
+             "checksum": {
+              "value": "f4d7d3cb1a6e100cd89d199a3774c5e238ad48780ee46237a579d6f51a09b0a9",
+              "algorithm": "SHA256"
+             },
+             "image": {
+              "height": 800,
+              "width": 1067
+             },
+             "contentType": "image/jpeg"
+            },
+            "type": "IMAGE",
+            "url": "https://cdn.immoscout24.ch/listings/v2/n168/4003327896/image/20b78b27b1fe3d992d46f28550938473.jpg"
+           },
+           {
+            "metadata": {
+             "checksum": {
+              "value": "fd0b24ee27492b01680a57d9cfa699277999d92b86043c94472de4d545b0b520",
+              "algorithm": "SHA256"
+             },
+             "image": {
+              "width": 1067,
+              "height": 800
+             },
+             "contentType": "image/jpeg",
+             "byteSize": 116863
+            },
+            "type": "IMAGE",
+            "file": "b9f63c95e8ed9fe3f760a849325da109.jpeg",
+            "url": "https://cdn.immoscout24.ch/listings/v2/n168/4003327896/image/15fcfa11108331ead91a9a1aa180f024.jpg"
+           },
+           {
+            "metadata": {
+             "contentType": "image/jpeg",
+             "image": {
+              "height": 800,
+              "width": 1067
+             },
+             "byteSize": 122260,
+             "checksum": {
+              "algorithm": "SHA256",
+              "value": "0e65e32d8b64483e8711cad6d0108082bc9e029b8d563ac79c77a686882c1dc7"
+             }
+            },
+            "file": "f0c17f0ec14a1a47dc7bb0a8343ce017.jpeg",
+            "type": "IMAGE",
+            "url": "https://cdn.immoscout24.ch/listings/v2/n168/4003327896/image/da2aa8f44bf9e34afcfa3ba070e414d8.jpg"
+           },
+           {
+            "file": "b6faaddc35d2a04a9400cd0646855b2e.jpeg",
+            "metadata": {
+             "contentType": "image/jpeg",
+             "byteSize": 33818,
+             "image": {
+              "width": 600,
+              "height": 800
+             },
+             "checksum": {
+              "algorithm": "SHA256",
+              "value": "8e0ab40fc400f5fe2886f7ced51ca35241f64ac94eec2b54dc130b89113cb598"
+             }
+            },
+            "type": "IMAGE",
+            "url": "https://cdn.immoscout24.ch/listings/v2/n168/4003327896/image/d2b3904f1f65ce508c6d7cd390b2e51f.jpg"
+           },
+           {
+            "url": "https://cdn.immoscout24.ch/listings/v2/n168/4003327896/image/16fd9ced8d4dc28e1746e3979776504c.jpg",
+            "metadata": {
+             "image": {
+              "width": 1067,
+              "height": 800
+             },
+             "byteSize": 47878,
+             "checksum": {
+              "algorithm": "SHA256",
+              "value": "78eb18ddd8e4f5de368e1d4db5b612e1f715e6d0b60540ce534ba1434e631f90"
+             },
+             "contentType": "image/jpeg"
+            },
+            "file": "9ea36b859b614e53a7836854fa2cd984.jpeg",
+            "type": "IMAGE"
+           },
+           {
+            "url": "https://cdn.immoscout24.ch/listings/v2/n168/4003327896/image/54000f4f85515db9da80381099b55f63.jpg",
+            "file": "c197479d35bb6c9fbf800950f419ca3a.jpeg",
+            "metadata": {
+             "byteSize": 35785,
+             "checksum": {
+              "value": "61ace79ef8ff70b148adb8a181477eb78c76f03224976a4a98f82e1d6cc95356",
+              "algorithm": "SHA256"
+             },
+             "contentType": "image/jpeg",
+             "image": {
+              "height": 800,
+              "width": 600
+             }
+            },
+            "type": "IMAGE"
+           },
+           {
+            "file": "8494af12c5a24b9e0f354e677cedcc55.jpeg",
+            "type": "IMAGE",
+            "metadata": {
+             "image": {
+              "height": 800,
+              "width": 600
+             },
+             "checksum": {
+              "value": "b838f6e440e6a3c15240b68f7856362579d20ac6c891fe10193fe21f56e3c6b2",
+              "algorithm": "SHA256"
+             },
+             "contentType": "image/jpeg",
+             "byteSize": 38304
+            },
+            "url": "https://cdn.immoscout24.ch/listings/v2/n168/4003327896/image/24094c1a95c04cedadd62e8ecd2a39ff.jpg"
+           },
+           {
+            "type": "IMAGE",
+            "file": "503a5ced3718dac28087552adc0f861a.jpeg",
+            "url": "https://cdn.immoscout24.ch/listings/v2/n168/4003327896/image/514d8b1a9b10cca9cb75bb1a4c935d10.jpg",
+            "metadata": {
+             "checksum": {
+              "algorithm": "SHA256",
+              "value": "3c812a12de09ba3cd741060e714af9f790715e7c88e828bda0b7e87ada6ee4c5"
+             },
+             "image": {
+              "height": 800,
+              "width": 600
+             },
+             "byteSize": 57901,
+             "contentType": "image/jpeg"
+            }
+           },
+           {
+            "metadata": {
+             "image": {
+              "width": 1067,
+              "height": 800
+             },
+             "byteSize": 76530,
+             "contentType": "image/jpeg",
+             "checksum": {
+              "value": "c19e9882426cb6b930c69ab1ba7aad16059b51ec81fdd992da1b0517ba8a6c55",
+              "algorithm": "SHA256"
+             }
+            },
+            "file": "c2c0f23df0390e940a2e5a258c43f0cb.jpeg",
+            "url": "https://cdn.immoscout24.ch/listings/v2/n168/4003327896/image/6bc9f5158fd57ee5390d39feff9db35e.jpg",
+            "type": "IMAGE"
+           },
+           {
+            "type": "IMAGE",
+            "file": "f581bab69941a2563275d2ca1ecc53dd.jpeg",
+            "metadata": {
+             "byteSize": 58321,
+             "checksum": {
+              "value": "6e90de39f5b4b623ba087c1120165f2527590e75493f764ca8d859747b96e65e",
+              "algorithm": "SHA256"
+             },
+             "image": {
+              "height": 800,
+              "width": 600
+             },
+             "contentType": "image/jpeg"
+            },
+            "url": "https://cdn.immoscout24.ch/listings/v2/n168/4003327896/image/4b32784b8b5fa42c72db5b22a29ce849.jpg"
+           }
+          ]
+         },
+         "fr": {
+          "attachments": [],
+          "text": {
+           "description": "19 beaux appartements, répartis sur deux maisons, sont situés dans le meilleur quartier de Zeihen et ne laissent aucun désir insatisfait pour les locataires. Appartement : <ul> <li>grandes pièces lumineuses</li> <li>parquet dans toutes les pièces de vie</li> <li>cuisine avec appareils de haute qualité</li> <li>buanderie privée avec lave-linge et sèche-linge</li> <li>espace de séjour spacieux</li> </ul> Situation de vie : <ul> <li>à proximité des commerces</li> <li>à proximité de l'arrêt de bus</li> <li>endroit calme</li> </ul> Les photos proviennent d'un appartement témoin dans le même immeuble. Un emplacement de parking dans le garage peut être loué pour 150,00 CHF par mois. Nous vous offrons le premier loyer net gratuit. Nous avons éveillé votre intérêt ? Alors n'hésitez pas et contactez-nous au 062 791 18 90.",
+           "title": "Appartements exclusifs 3.5 pièces"
+          },
+          "isMachineTranslated": true
+         },
+         "primary": "de",
+         "en": {
+          "text": {
+           "title": "Exclusive 3.5-room apartments",
+           "description": "19 beautiful apartments, spread over two houses, are located in the best area of Zeihen and leave no wishes unfulfilled for tenants. Apartment: <ul> <li>large, bright rooms</li> <li>parquet floor in all living rooms</li> <li>kitchen with high-quality appliances</li> <li>private laundry room with washing machine and dryer</li> <li>spacious seating area</li> </ul> Living situation: <ul> <li>near shopping facilities</li> <li>near bus stop</li> <li>quiet location</li> </ul> The photos are from a model apartment in the same building. A parking space in the garage can be rented for an additional CHF 150.00 per month. We give you the first net rent for free. Have we sparked your interest? Then don't hesitate and contact us at 062 791 18 90."
+          },
+          "attachments": [],
+          "isMachineTranslated": true
+         },
+         "it": {
+          "isMachineTranslated": true,
+          "attachments": [],
+          "text": {
+           "title": "Appartamenti esclusivi 3.5 locali",
+           "description": "19 bellissimi appartamenti, distribuiti su due case, sono situati nella migliore zona di Zeihen e non lasciano insoddisfatti i desideri degli inquilini. Appartamento: <ul> <li>stanze ampie e luminose</li> <li>parquet in tutte le stanze</li> <li>cucina con elettrodomestici di alta qualità</li> <li>lavanderia privata con lavatrice e asciugatrice</li> <li>area di soggiorno spaziosa</li> </ul> Situazione abitativa: <ul> <li>vicino ai negozi</li> <li>vicino alla fermata dell'autobus</li> <li>zona tranquilla</li> </ul> Le foto provengono da un appartamento modello nello stesso edificio. Un posto auto nel garage può essere affittato per 150,00 CHF al mese. Noi vi regaliamo il primo affitto netto. Abbiamo suscitato il vostro interesse? Allora non esitate e contattateci al 062 791 18 90."
+          }
+         }
+        },
+        "meta": {
+         "createdAt": "2026-07-21T06:01:56.181Z"
+        },
+        "offerType": "RENT",
+        "platforms": [
+         "homegate",
+         "immoscout24",
+         "alleimmobilien",
+         "home",
+         "immostreet",
+         "anibis",
+         "tutti",
+         "flatfox",
+         "icasa"
+        ],
+        "prices": {
+         "rent": {
+          "area": "ALL",
+          "gross": 2350,
+          "interval": "MONTH",
+          "net": 2150,
+          "extra": 200
+         },
+         "currency": "CHF"
+        }
+       },
+       "listingCard": {
+        "size": "L"
+       },
+       "listingScores": {
+        "packageScore": 14,
+        "listingCompletenessScore": 10
+       },
+       "newConstructionData": {
+        "projectType": "NEW_CONSTRUCTION_LIGHT"
+       },
+       "listerBranding": {
+        "logoUrl": "https://cdn.immoscout24.ch/t_customer_logo/logos/l_n168_v1.png",
+        "isQualityPartner": false,
+        "subscriptionType": "Silver",
+        "isPremiumBranding": false,
+        "basePackage": "RE_SILVER"
+       }
+      },
+      {
+       "listingType": {
+        "type": "PREMIUM"
+       },
+       "id": "4003298496",
+       "listing": {
+        "address": {
+         "geoCoordinates": {
+          "longitude": 8.204040811988,
+          "accuracy": "HIGH",
+          "latitude": 47.266424892063
+         },
+         "geoTags": [
+          "geo-region-kulm",
+          "geo-canton-aargau",
+          "geo-country-switzerland",
+          "geo-city-beinwil-am-see",
+          "geo-zipcode-5712"
+         ],
+         "locality": "Beinwil am See",
+         "postalCode": "5712",
+         "street": "Häsigasse 8",
+         "region": "AG"
+        },
+        "categories": [
+         "APARTMENT",
+         "FLAT"
+        ],
+        "characteristics": {
+         "floor": 0,
+         "arePetsAllowed": true,
+         "hasParking": true,
+         "yearLastRenovated": 2026,
+         "isChildFriendly": true,
+         "livingSpace": 80,
+         "numberOfRooms": 3,
+         "hasBalcony": true
+        },
+        "id": "4003298496",
+        "localization": {
+         "fr": {
+          "attachments": [],
+          "isMachineTranslated": true,
+          "text": {
+           "description": "Cet appartement de haute qualité, rénové impressionne par ses espaces généreux et ses caractéristiques spéciales. Idéal pour les célibataires ou les couples avec une prétention au confort et à la qualité.Équipement<ul><li>Appartement spacieux avec environ 80 m² d'espace de vie</li><li>Terrasse ensoleillée</li><li>Cuisine moderne de haute qualité</li><li>2 salles de bains<ul><li>Toilettes séparées avec machine à laver et sèche-linge</li><li>Toilettes avec douche</li></ul></li><li>Accès direct depuis l'appartement à une salle de loisirs isolée dans le sous-sol</li><li>Puits avec eau de source fraîche</li><li>Appartement entier rénové de manière complète</li><li>Quartier résidentiel calme à Beinwil am See</li></ul>Conditions de location<ul><li>Loyer net : CHF 1’695.– / mois</li><li>Frais supplémentaires : CHF 285.– / mois</li><li>Stationnement extérieur : CHF 80.– / mois (en option)</li></ul>Cet appartement offre un concept de vie unique avec beaucoup de confort et de possibilités d'utilisation supplémentaires qui sont rarement trouvés.Emplacement idéal sur le lac de Hallwil : L'appartement est situé à proximité immédiate du lac et bénéficie d'un emplacement ensoleillé. L'environnement calme garantit des nuits reposantes et des journées détendues. La gare de Beinwil am See est à seulement 4 minutes à pied, et la station de bateau peut être atteinte en 10 minutes à pied. Tous les équipements importants tels que la pharmacie TopPharm Homberg (3 minutes), l'ancienne maison d'école (2 minutes) et le supermarché Bumehof (8 minutes) sont facilement accessibles.Cet appartement est idéal pour les familles avec enfants et les propriétaires d'animaux de compagnie - les deux sont les bienvenus. La combinaison d'équipements modernes, d'emplacement naturel au bord du lac et d'infrastructure excellente fait de cette propriété un véritable joyau. Disponible immédiatement !",
+           "title": "Appartement de 2,5 pièces rénové avec terrasse"
+          }
+         },
+         "it": {
+          "attachments": [],
+          "isMachineTranslated": true,
+          "text": {
+           "title": "Appartamento di 2,5 locali ristrutturato con terrazza",
+           "description": "Questo appartamento di alta qualità, ristrutturato colpisce per i suoi spazi generosi e le sue caratteristiche speciali. Ideale per single o coppie con pretese di comfort e qualità.Attrezzature<ul><li>Appartamento spazioso con circa 80 m² di spazio abitativo</li><li>Terrazza soleggiata</li><li>Cucina moderna di alta qualità</li><li>2 bagni<ul><li>Bagno separato con lavatrice e asciugatrice</li><li>Bagno con doccia</li></ul></li><li>Accesso diretto dall'appartamento a una sala hobby isolata nel seminterrato</li><li>Pozzo con acqua di sorgente fresca</li><li>Appartamento intero ristrutturato in modo completo</li><li>Quartiere residenziale tranquillo a Beinwil am See</li></ul>Condizioni di locazione<ul><li>Affitto netto: CHF 1’695.– / mese</li><li>Spese accessorie: CHF 285.– / mese</li><li>Parcheggio esterno: CHF 80.– / mese (opzionale)</li></ul>Questo appartamento offre un concetto di vita unico con molto comfort e possibilità di utilizzo aggiuntive che sono raremente trovate.Posizione ideale sul lago di Hallwil: L'appartamento si trova nella vicinanza immediata del lago e beneficia di una posizione soleggiata. L'ambiente tranquillo garantisce notti riposanti e giornate rilassate. La stazione ferroviaria di Beinwil am See è a solo 4 minuti a piedi, e la stazione dei battelli può essere raggiunta in 10 minuti a piedi. Tutti gli impianti importanti come la farmacia TopPharm Homberg (3 minuti), la vecchia casa scolastica (2 minuti) e il supermercato Bumehof (8 minuti) sono facilmente accessibili.Questo appartamento è ideale per le famiglie con bambini e i proprietari di animali domestici - entrambi sono benvenuti. La combinazione di attrezzature moderne, posizione naturale sul lago e infrastrutture eccellenti fa di questa proprietà un vero gioiello. Disponibile immediatamente!"
+          }
+         },
+         "primary": "de",
+         "en": {
+          "attachments": [],
+          "isMachineTranslated": true,
+          "text": {
+           "description": "This high-quality newly renovated 2.5-room apartment impresses with generous space and special features. Ideal for singles or couples with a claim to comfort and quality.Equipment<ul><li>Spacious apartment with approx. 80 m² living space</li><li>Sunny terrace</li><li>High-quality, modern kitchen</li><li>2 wet cells<ul><li>Separate toilet with washing machine &amp; dryer</li><li>Toilet with shower</li></ul></li><li>Direct access from the apartment to an isolated hobby room in the basement</li><li>Well with fresh spring water</li><li>Entire apartment comprehensively renovated</li><li>Quiet residential area in Beinwil am See</li></ul>Rental conditions<ul><li>Net rent: CHF 1’695.– / month</li><li>Additional costs: CHF 285.– / month</li><li>Outdoor parking: CHF 80.– / month (optional)</li></ul>This apartment offers a unique living concept with a lot of comfort and additional usage possibilities that are rarely found.Perfect location on Lake Hallwil: The apartment is located in the immediate vicinity of the lake and benefits from a sunny location. The quiet environment guarantees restful nights and relaxed days. Beinwil am See train station is only 4 minutes' walk away, and the ship station can be reached in 10 minutes on foot. All important facilities such as the TopPharm Homberg pharmacy (3 minutes), the old school house (2 minutes), and the Bumehof supermarket (8 minutes) are easily accessible.This apartment is ideal for families with children and pet owners - both are welcome. The combination of modern equipment, natural location by the lake, and excellent infrastructure makes this property a true gem. Available immediately!",
+           "title": "Newly renovated 2.5-room apartment with terrace"
+          }
+         },
+         "de": {
+          "attachments": [
+           {
+            "url": "https://cdn.immoscout24.ch/listings/v2/is24nif/4003298496/image/9c873ed7c8d86efafea44c890108c44e.png",
+            "type": "IMAGE",
+            "alt": "Open kitchen with island, wooden parquet floor, white walls, ceiling with recessed lighting, windows, kitchen hood, central island with sink and stove",
+            "metadata": {
+             "byteSize": 615136,
+             "image": {
+              "width": 1500,
+              "height": 1125
+             },
+             "checksum": {
+              "value": "7721fce9a40f68d0f68bc85557f1c2b53f41f6bd2e808d24a675db47100c65b5",
+              "algorithm": "SHA256"
+             },
+             "contentType": "image/png"
+            },
+            "file": "da7f17eb6f.png"
+           },
+           {
+            "file": "75802edee3.jpg",
+            "type": "IMAGE",
+            "alt": "modern kitchen, white cabinets, black countertop, island, wooden floor, white walls, ceiling lights, exhaust hood, sink, faucet",
+            "metadata": {
+             "image": {
+              "height": 1125,
+              "width": 1500
+             },
+             "contentType": "image/jpeg",
+             "byteSize": 143422,
+             "checksum": {
+              "algorithm": "SHA256",
+              "value": "851b4de5f9225a9f7c2df6788414f805cfcd0e9e8cbcf8c8270d318c20af85fa"
+             }
+            },
+            "url": "https://cdn.immoscout24.ch/listings/v2/is24nif/4003298496/image/d19841852656712dbb277aa3b722fed6.jpg"
+           },
+           {
+            "file": "72e3a62515.jpg",
+            "metadata": {
+             "image": {
+              "width": 1500,
+              "height": 1125
+             },
+             "byteSize": 110492,
+             "contentType": "image/jpeg",
+             "checksum": {
+              "value": "96f91d739656e7a4026e63c7d33fd132fb3150acd01b82d27bbc235d4fe4185e",
+              "algorithm": "SHA256"
+             }
+            },
+            "type": "IMAGE",
+            "alt": "empty room, wooden parquet floor, white walls, window, radiator, door",
+            "url": "https://cdn.immoscout24.ch/listings/v2/is24nif/4003298496/image/11404da32f8a33ea9765df2952cd036f.jpg"
+           },
+           {
+            "alt": "empty room, wooden parquet floor, white walls, white radiators, windows, kitchen area",
+            "file": "94b0da5af4.jpg",
+            "type": "IMAGE",
+            "url": "https://cdn.immoscout24.ch/listings/v2/is24nif/4003298496/image/74621ca7e64cb2af2d5919079bb0bfca.jpg",
+            "metadata": {
+             "contentType": "image/jpeg",
+             "checksum": {
+              "value": "14a56ae0670f995946306c1168c0d056e0777ca5c97b8db1ef41b4bd6fa0b622",
+              "algorithm": "SHA256"
+             },
+             "byteSize": 101347,
+             "image": {
+              "width": 1200,
+              "height": 1600
+             }
+            }
+           },
+           {
+            "metadata": {
+             "contentType": "image/jpeg",
+             "checksum": {
+              "algorithm": "SHA256",
+              "value": "0b4ac05138fe1ceb8b4e4e1554f538d7cbf81d85b3a930afd389ef811bc9ccd2"
+             },
+             "image": {
+              "height": 1600,
+              "width": 1200
+             },
+             "byteSize": 107058
+            },
+            "type": "IMAGE",
+            "alt": "modern bathroom with white sink, mirror, toilet, washing machine, tiled floor",
+            "file": "1dfc42ab80.jpg",
+            "url": "https://cdn.immoscout24.ch/listings/v2/is24nif/4003298496/image/bba2971915e581f1c7dac1e9c75445ad.jpg"
+           },
+           {
+            "metadata": {
+             "byteSize": 118828,
+             "checksum": {
+              "algorithm": "SHA256",
+              "value": "3abb0c9a69d1699bb87a228eca964504dd57e43b6d5ab3ff8d551d06dd7a7314"
+             },
+             "image": {
+              "width": 1200,
+              "height": 1600
+             },
+             "contentType": "image/jpeg"
+            },
+            "alt": "modern bathroom with walk-in shower, toilet, sink, and mirror",
+            "file": "e7afc7e9ff.jpg",
+            "type": "IMAGE",
+            "url": "https://cdn.immoscout24.ch/listings/v2/is24nif/4003298496/image/c20af8e9fa11e319073542faa3d9e938.jpg"
+           },
+           {
+            "type": "IMAGE",
+            "url": "https://cdn.immoscout24.ch/listings/v2/is24nif/4003298496/image/1ac9ebce73901b3a832bad182d866d9e.jpg",
+            "alt": "empty room, wooden parquet floor, white walls, two windows, two radiators, open door",
+            "metadata": {
+             "checksum": {
+              "value": "dd802c8bfcc7050270c22065de0e959493bfa27be8f82dc38fe702a664952816",
+              "algorithm": "SHA256"
+             },
+             "image": {
+              "height": 1600,
+              "width": 1200
+             },
+             "contentType": "image/jpeg",
+             "byteSize": 109770
+            },
+            "file": "5feaed176a.jpg"
+           }
+          ],
+          "isMachineTranslated": false,
+          "text": {
+           "description": "Diese hochwertig neu renovierte 2.5‑Zimmer‑Wohnung überzeugt durch grosszügige Platzverhältnisse und besondere Ausstattungsmerkmale. Ideal für Singles oder Paare mit Anspruch an Komfort und Qualität.Ausstattung<ul><li>Grosszügige Wohnung mit ca. 80 m² Wohnfläche</li><li>Sonnige Terrasse</li><li>Hochwertige, moderne Küche</li><li>2 Nasszellen<ul><li>Sep. WC mit Waschmaschine &amp; Tumbler</li><li>WC mit Dusche</li></ul></li><li>Direkter Zugang aus der Wohnung zu einem isolierten Hobbyraum im Keller</li><li>Brunnen mit frischem Quellwasser</li><li>Ganze Wohnung umfassend neu renoviert</li><li>Ruhige Wohnlage in Beinwil am See</li></ul>Mietkonditionen<ul><li>Nettomiete: CHF 1’695.– / Monat</li><li>Nebenkosten: CHF 285.– / Monat</li><li>Aussenparkplatz: CHF 80.– / Monat (optional)</li></ul>Diese Wohnung bietet ein einmaliges Wohnkonzept mit viel Komfort und zusätzlichen Nutzungsmöglichkeiten, die selten zu finden sind.Perfekte Lage am Hallwilersee: Die Wohnung befindet sich in unmittelbarer Nähe zum See und profitiert von einer sonnigen Lage. Die ruhige Umgebung garantiert erholsame Nächte und entspannte Tage. Der Bahnhof Beinwil am See ist nur 4 Gehminuten entfernt, die Schiffstation erreichen Sie in 10 Minuten zu Fuss. Alle wichtigen Einrichtungen wie die TopPharm Homberg Apotheke (3 Min.), das Alte Schulhaus (2 Min.) und der Bumehof Supermarkt (8 Min.) sind bequem erreichbar.Diese Wohnung ist ideal für Familien mit Kindern und Haustierbesitzer - beides ist herzlich willkommen. Die Kombination aus moderner Ausstattung, naturnaher Lage am See und excellenter Infrastruktur macht diese Immobilie zu einem wahren Juwel. Verfügbar ab sofort!",
+           "title": "Neu renovierte 2.5-Zimmer-Wohnung mit Terrasse"
+          }
+         }
+        },
+        "meta": {
+         "createdAt": "2026-07-08T12:47:05.828Z"
+        },
+        "offerType": "RENT",
+        "platforms": [
+         "immoscout24",
+         "homegate",
+         "alleimmobilien",
+         "home",
+         "immostreet"
+        ],
+        "prices": {
+         "currency": "CHF",
+         "rent": {
+          "interval": "MONTH",
+          "gross": 1980
+         },
+         "buy": {}
+        },
+        "valueAddedServices": {}
+       },
+       "listingCard": {
+        "size": "L"
+       },
+       "listingScores": {
+        "packageScore": 15,
+        "listingCompletenessScore": 9
+       },
+       "listerBranding": {
+        "isQualityPartner": false
+       }
+      }
+     ]
+    }
+   }
+  }
+ }
+}
