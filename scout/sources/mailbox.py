@@ -198,15 +198,20 @@ class MailboxSource(Source):
             for uid in trimmed:
                 status, data = conn.uid("FETCH", str(uid), "(BODY.PEEK[])")
                 if status != "OK":
-                    log.warning("mailbox: FETCH failed for uid %s", uid)
-                    continue
+                    # Stop rather than skip: UIDs are processed in ascending
+                    # order and the cursor is a high-water mark, so advancing
+                    # past a failed fetch would silently lose that message
+                    # forever. Leave it (and everything after it) for the next
+                    # run, when the transient error has hopefully cleared.
+                    log.warning("mailbox: FETCH failed for uid %s; retrying next run", uid)
+                    break
                 body = _first_payload(data)
                 if body:
                     bodies.append(body)
                 highest = max(highest, uid)
 
-            # Only advance past messages we actually trimmed to, so a capped run
-            # resumes rather than skips.
+            # `highest` only covers messages actually fetched, so a capped or
+            # interrupted run resumes rather than skips.
             return bodies, {"uidvalidity": uidvalidity, "max_uid": highest}
         finally:
             try:
@@ -612,8 +617,11 @@ def _block(anchor: Node) -> Node | None:
         if MIN_BLOCK_CHARS <= length <= MAX_BLOCK_CHARS:
             return node
         if length > MAX_BLOCK_CHARS:
-            # Overshot: everything above is bigger still.
-            return fallback or node
+            # Overshot: everything above is bigger still. If even the anchor
+            # itself is oversized there is no usable block at all — returning
+            # the oversized node would let one mega-block's first price answer
+            # for every listing linked from it.
+            return fallback
         fallback = node
         node = node.parent
     return fallback

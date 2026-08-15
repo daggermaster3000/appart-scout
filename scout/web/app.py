@@ -10,6 +10,7 @@ from __future__ import annotations
 import logging
 import secrets
 from contextlib import asynccontextmanager
+from datetime import datetime, timedelta, timezone
 from pathlib import Path
 from typing import Any
 
@@ -83,8 +84,12 @@ def _page(request: Request, name: str, **context: Any) -> HTMLResponse:
     with connect() as conn:
         criteria = load_criteria(conn)
         settings = load_settings(conn)
+        shortlist_count = conn.execute(
+            "SELECT COUNT(*) c FROM feedback WHERE verdict = 'shortlist'"
+        ).fetchone()["c"]
     context.setdefault("criteria", criteria)
     context.setdefault("settings", settings)
+    context["shortlist_count"] = shortlist_count
     context["running"] = scheduler.is_running()
     context["next_run"] = scheduler.next_run_time()
     context["nav"] = name
@@ -97,12 +102,33 @@ def _page(request: Request, name: str, **context: Any) -> HTMLResponse:
 
 
 @app.get("/", response_class=HTMLResponse)
-def dashboard(request: Request, show_hidden: bool = False, limit: int = 60):
+def dashboard(request: Request, view: str = "best", show_hidden: bool = False, limit: int = 60):
+    """Three views, vetted-first by default.
+
+    * ``best`` — only listings whose commutes are both resolved, i.e. every
+      hard filter including the commute ceilings has actually been applied.
+      What you skim without skepticism.
+    * ``shortlist`` — the ⭐-saved selection.
+    * ``all`` — everything scored, including provisional metadata-only scores.
+    """
+    if view not in ("best", "shortlist", "all"):
+        view = "best"
     with connect() as conn:
-        items = store.ranked(conn, limit=limit, include_hidden=show_hidden)
+        items = store.ranked(
+            conn,
+            limit=limit,
+            include_hidden=show_hidden,
+            vetted_only=view == "best",
+            verdict="shortlist" if view == "shortlist" else None,
+        )
         total = conn.execute("SELECT COUNT(*) c FROM listing WHERE active = 1").fetchone()["c"]
+    # "new" pill: first seen in the last 48h, so a returning visit can skim
+    # just the pills instead of re-reading the grid.
+    cutoff = (datetime.now(timezone.utc) - timedelta(hours=48)).isoformat()
+    for item in items:
+        item["is_new"] = (item.get("first_seen") or "") >= cutoff
     return _page(
-        request, "index", items=items, total=total, show_hidden=show_hidden
+        request, "index", items=items, total=total, show_hidden=show_hidden, view=view
     )
 
 

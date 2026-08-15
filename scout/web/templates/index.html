@@ -1,16 +1,43 @@
 {% extends "base.html" %}
 {% block content %}
-<h1>Ranked listings</h1>
+<h1>
+  {% if view == 'shortlist' %}Shortlist
+  {% elif view == 'all' %}Everything scored
+  {% else %}Best fits{% endif %}
+</h1>
+
 <p class="sub">
-  {{ items|length }} shown of {{ total }} active ·
-  scored against “{{ criteria.name }}”
-  {% if show_hidden %}· <a href="/">hide dismissed</a>{% else %}· <a href="/?show_hidden=true">show dismissed</a>{% endif %}
+  <a href="/" {% if view == 'best' %}class="on"{% endif %}>best fits</a> ·
+  <a href="/?view=shortlist" {% if view == 'shortlist' %}class="on"{% endif %}>shortlist ({{ shortlist_count }})</a> ·
+  <a href="/?view=all" {% if view == 'all' %}class="on"{% endif %}>everything</a>
+  &nbsp;—&nbsp; {{ items|length }} shown of {{ total }} active
+  {% if show_hidden %}· <a href="/?view={{ view }}">hide dismissed</a>{% else %}· <a href="/?view={{ view }}&show_hidden=true">show dismissed</a>{% endif %}
 </p>
+
+{% if view == 'best' %}
+<p class="hint" style="margin:-12px 0 18px;">
+  Every listing here passed your filters <em>and</em> both commute ceilings —
+  skim it without skepticism. New listings appear once their commutes resolve.
+</p>
+{% elif view == 'all' %}
+<p class="hint" style="margin:-12px 0 18px;">
+  Includes listings whose commutes are not resolved yet — their scores are
+  provisional (price and size only) and often too high.
+</p>
+{% endif %}
 
 {% if not items %}
 <div class="empty">
-  Nothing ranked yet. Press <strong>Run now</strong> — the first run takes a few
-  minutes while it resolves commute times, then later runs are much faster.
+  {% if view == 'shortlist' %}
+    Nothing shortlisted yet. Press ⭐ on any listing to save it here.
+  {% elif view == 'best' %}
+    Nothing fully vetted yet. Commute lookups are rate-limited and catch up a
+    little more each run — check back after the next one, or peek at
+    <a href="/?view=all">everything</a>.
+  {% else %}
+    Nothing ranked yet. Press <strong>Run now</strong> — the first run takes a few
+    minutes while it resolves commute times, then later runs are much faster.
+  {% endif %}
 </div>
 {% endif %}
 
@@ -26,8 +53,11 @@
   <div class="body">
     <div class="row">
       <a class="price" href="/listing/{{ item.id }}">CHF {{ listing.price_chf|chf }}</a>
-      <span class="pill {{ 'good' if item.score >= 80 else 'mid' if item.score >= 65 else '' }}">
-        {{ '%.0f'|format(item.score) }}
+      <span>
+        {% if item.is_new %}<span class="pill new">new</span>{% endif %}
+        <span class="pill {{ 'good' if item.score >= 80 else 'mid' if item.score >= 65 else '' }}">
+          {{ '%.0f'|format(item.score) }}
+        </span>
       </span>
     </div>
 

@@ -323,6 +323,8 @@ def ranked(
     include_hidden: bool = False,
     min_score: float = 0.0,
     listing_id: str | None = None,
+    vetted_only: bool = False,
+    verdict: str | None = None,
 ) -> list[dict[str, Any]]:
     sql = """
         SELECT l.*, s.total AS score, s.parts, s.reasons,
@@ -344,6 +346,14 @@ def ranked(
     if listing_id is not None:
         sql += " AND l.id = ?"
         params.append(listing_id)
+    # "Vetted" = both commutes resolved, i.e. the score is final and the
+    # commute ceilings have actually been applied. Same eligibility rule the
+    # digest uses; the default dashboard view shows nothing less.
+    if vetted_only:
+        sql += " AND ca.minutes IS NOT NULL AND cb.minutes IS NOT NULL"
+    if verdict is not None:
+        sql += " AND f.verdict = ?"
+        params.append(verdict)
     if not include_hidden:
         sql += " AND (f.verdict IS NULL OR f.verdict NOT IN ('hidden', 'down'))"
     sql += " ORDER BY s.total DESC LIMIT ?"

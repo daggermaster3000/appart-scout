@@ -255,7 +255,16 @@ sources/*  ──►  normalize  ──►  dedup  ──►  hard filters  ─�
   Any listing can still be evaluated on demand from its **details page**,
   whatever it scores.
 
-- **The web UI** lists ranked cards; clicking one opens a details page with
+- **The web UI opens on "Best fits"**: only listings that passed every hard
+  filter *and* both commute ceilings — the same eligibility rule the digest
+  uses — so the default grid can be skimmed without skepticism. ⭐ saves a
+  listing to the **Shortlist** (its own view, linked in the nav with a count);
+  ✕ dismisses it; a "new" pill marks anything first seen in the last 48 h so a
+  returning visit only reads the pills. "Everything" shows the provisional
+  rest. Commute lookups are spent on the highest-provisionally-scored listings
+  first, so the best-fits view fills in best-first rather than randomly.
+
+- **The listing details page** — clicking any card — shows
   every photo, the full commute breakdown per person, the photo evaluation, the
   score bars, the description, and a map. The map is an OpenStreetMap embed —
   no API key, no JS library — and is the one part of the UI that needs

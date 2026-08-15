@@ -66,6 +66,8 @@ a.price:hover { color: var(--accent); }
 .facts { color: var(--muted); font-size: 13px; }
 .pill { font-size: 12px; font-weight: 650; color: #fff; padding: 3px 9px; border-radius: 11px; background: var(--muted); }
 .pill.good { background: var(--good); } .pill.mid { background: var(--warn); }
+.pill.new { background: var(--accent); }
+.sub a.on { font-weight: 650; color: var(--ink); text-decoration: none; }
 .verdict { font-size: 13px; background: var(--bg); border-left: 3px solid var(--line); padding: 8px 10px; border-radius: 0 6px 6px 0; }
 .flags { color: var(--bad); font-size: 12px; }
 .reasons { margin: 0; padding-left: 17px; font-size: 13px; color: var(--muted); }

@@ -168,10 +168,22 @@ def _persist(conn, merged, stats) -> list[str]:
 
 
 async def _rank(conn, criteria: Criteria, settings: Settings, commute, version, stats) -> list[str]:
-    """Filter, resolve commutes for survivors, then score on metadata."""
+    """Filter and score everything, then spend the commute budget best-first.
+
+    Two passes on purpose. The timetable API allows ~150 calls per run (three
+    per listing), nowhere near enough for a cold catalogue, so *which* listings
+    get resolved decides how fast the vetted list becomes useful. Resolving in
+    database order spent the budget on arbitrary rows; resolving in provisional-
+    score order spends it on the likeliest winners, which is exactly the set the
+    dashboard and the digest want vetted first.
+    """
     kept: list[str] = []
     dropped = 0
+    # (provisional score, listing_id, listing) for rows without commutes yet
+    unresolved: list[tuple[float, str, Listing]] = []
 
+    # Pass 1: no API calls. Filter, score on what is already known, and note
+    # who still needs a commute lookup.
     for listing_id, listing in store.active_listings(conn, settings.max_listing_age_days):
         ok, _reason = passes_filters(listing, criteria)
         if not ok:
@@ -180,16 +192,6 @@ async def _rank(conn, criteria: Criteria, settings: Settings, commute, version, 
             continue
 
         legs = store.load_commutes(conn, listing_id)
-        if (
-            not legs
-            and not commute.throttled
-            and commute.api_calls < settings.max_commute_calls_per_run
-        ):
-            legs = await commute.commutes(listing)
-            store.save_commutes(conn, listing_id, legs)
-
-        # A listing whose commute is not resolved yet is scored on metadata
-        # alone rather than dropped; the next run fills it in.
         ok, _reason = passes_filters(listing, criteria, legs)
         if not ok:
             store.drop_score(conn, listing_id)
@@ -197,11 +199,36 @@ async def _rank(conn, criteria: Criteria, settings: Settings, commute, version, 
             continue
 
         vision = store.load_vision(conn, listing_id)
-        store.save_score(conn, listing_id, score(listing, criteria, legs, vision), version)
+        breakdown = score(listing, criteria, legs, vision)
+        store.save_score(conn, listing_id, breakdown, version)
         kept.append(listing_id)
+        if not legs:
+            unresolved.append((breakdown.total, listing_id, listing))
+
+    # Pass 2: burn the budget top-down. A listing whose commute stays
+    # unresolved keeps its metadata-only score and waits for a later run.
+    unresolved.sort(key=lambda entry: entry[0], reverse=True)
+    resolved = 0
+    for _provisional, listing_id, listing in unresolved:
+        if commute.throttled or commute.api_calls >= settings.max_commute_calls_per_run:
+            break
+        legs = await commute.commutes(listing)
+        store.save_commutes(conn, listing_id, legs)
+        resolved += 1
+
+        ok, _reason = passes_filters(listing, criteria, legs)
+        if not ok:
+            # The commute is what disqualified it - the whole point of pass 2.
+            store.drop_score(conn, listing_id)
+            kept.remove(listing_id)
+            dropped += 1
+            continue
+        vision = store.load_vision(conn, listing_id)
+        store.save_score(conn, listing_id, score(listing, criteria, legs, vision), version)
 
     conn.commit()
     stats["dropped"] = dropped
+    stats["commutes_resolved"] = resolved
     return kept
 
 

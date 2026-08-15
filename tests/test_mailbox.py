@@ -195,3 +195,67 @@ def test_place_parsing_takes_the_swiss_postcode_and_town():
 )
 def test_category_is_inferred_from_prose(text, expected):
     assert _category(text) == expected
+
+
+# -- IMAP cursor -------------------------------------------------------------
+
+
+class FakeImap:
+    """Just enough of imaplib for `_collect`'s fetch loop."""
+
+    def __init__(self, uids: list[int], fail_uid: int | None = None) -> None:
+        self.uids = uids
+        self.fail_uid = fail_uid
+        self.untagged_responses = {"UIDVALIDITY": [b"7"]}
+
+    def login(self, *a):
+        return "OK", []
+
+    def select(self, *a, **k):
+        return "OK", [b"3"]
+
+    def uid(self, command, *args):
+        if command == "SEARCH":
+            return "OK", [" ".join(str(u) for u in self.uids).encode()]
+        if command == "FETCH":
+            uid = int(args[0])
+            if uid == self.fail_uid:
+                return "NO", [None]
+            return "OK", [(b"1 (BODY[] {3})", b"raw"), b")"]
+        raise AssertionError(command)
+
+    def logout(self):
+        return "BYE", []
+
+
+def collect(fake, state):
+    from unittest.mock import patch
+
+    from scout.sources.mailbox import MailboxSource
+
+    class Cfg:
+        imap_host, imap_port, imap_ssl = "h", 993, True
+        imap_user, imap_password, imap_folder = "u", "p", "INBOX"
+
+    with patch("scout.sources.mailbox.imaplib.IMAP4_SSL", return_value=fake):
+        return MailboxSource()._collect(Cfg(), state)
+
+
+def test_cursor_advances_over_successfully_fetched_messages():
+    bodies, state = collect(FakeImap([5, 6, 7]), {"uidvalidity": 7, "max_uid": 4})
+    assert len(bodies) == 3
+    assert state["max_uid"] == 7
+
+
+def test_a_failed_fetch_does_not_advance_the_cursor_past_the_failure():
+    """The cursor is a high-water mark: skipping a failed UID loses the message
+    forever. It must stop at the failure and retry from there next run."""
+    bodies, state = collect(FakeImap([5, 6, 7], fail_uid=6), {"uidvalidity": 7, "max_uid": 4})
+    assert len(bodies) == 1  # uid 5 only
+    assert state["max_uid"] == 5  # 6 and 7 retried next run
+
+
+def test_uidvalidity_change_rescans_from_zero():
+    bodies, state = collect(FakeImap([1, 2]), {"uidvalidity": 999, "max_uid": 50})
+    assert len(bodies) == 2
+    assert state["uidvalidity"] == 7
