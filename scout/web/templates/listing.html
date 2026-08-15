@@ -17,16 +17,21 @@
 </p>
 
 {% if listing.images %}
+<a class="hero" href="{{ listing.images[0].url }}" target="_blank" rel="noopener">
+  <img src="{{ listing.images[0].url }}" alt="{{ listing.images[0].caption }}">
+</a>
+{% if listing.images|length > 1 %}
 <div class="gallery">
-  {% for image in listing.images %}
+  {% for image in listing.images[1:] %}
   <a href="{{ image.url }}" target="_blank" rel="noopener" title="{{ image.caption }}">
     <img src="{{ image.thumb_url or image.url }}" alt="{{ image.caption }}" loading="lazy">
   </a>
   {% endfor %}
 </div>
+{% endif %}
 <p class="hint">{{ listing.images|length }} photo{{ '' if listing.images|length == 1 else 's' }} — click one for full size.</p>
 {% else %}
-<div class="empty">This listing came without photos.</div>
+<div class="empty">This listing came without photos — open it on the portal below to see them.</div>
 {% endif %}
 
 <h2>Facts</h2>

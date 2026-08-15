@@ -5,6 +5,7 @@ from __future__ import annotations
 
 from pathlib import Path
 
+import httpx
 import pytest
 
 from scout.sources.mailbox import (
@@ -195,6 +196,116 @@ def test_place_parsing_takes_the_swiss_postcode_and_town():
 )
 def test_category_is_inferred_from_prose(text, expected):
     assert _category(text) == expected
+
+
+# -- wrappers seen in real Homegate mail -------------------------------------
+
+
+def test_path_embedded_tracking_wrapper_is_unwrapped():
+    """tracking.notification.homegate.ch/CL0/<urlencoded>/1/<token> style."""
+    wrapped = (
+        "https://tracking.notification.homegate.ch/CL0/"
+        "https:%2F%2Fwww.homegate.ch%2Frent%2F4003387976%3Futm_source=crm/1/0107abc/tok="
+    )
+    assert clean_url(wrapped, HOMEGATE) == "https://www.homegate.ch/rent/4003387976"
+
+
+def test_unresolved_tracking_subdomain_is_rejected_not_mistaken_for_a_listing():
+    """The regression: tracking-path digits became a fake listing id."""
+    wrapped = (
+        "https://tracking.notification.homegate.ch/CL0/"
+        "https:%2F%2Fwww.example.com%2F/1/010701a00657e908-89cf56c6/token="
+    )
+    url = clean_url(wrapped, HOMEGATE)
+    assert url is None or listing_id(url) is None
+
+
+def test_opaque_sendgrid_link_is_flagged_for_http_resolution():
+    from scout.sources.mailbox import opaque_redirect
+
+    assert opaque_redirect("https://u8489473.ct.sendgrid.net/ls/click?upn=u001.XYZ")
+    # Never follow anything that could cancel the alert subscription.
+    assert opaque_redirect("https://u8489473.ct.sendgrid.net/wf/unsubscribe?upn=x") is None
+    assert opaque_redirect("https://www.homegate.ch/rent/123456") is None
+
+
+def test_english_locale_price_with_comma_parses():
+    assert _price("CHF 2,500.–") == 2500
+
+
+def test_place_falls_back_to_the_title_when_the_body_runs_on():
+    from scout.sources.mailbox import Portal, build_listing
+
+    listing = build_listing(
+        portal=Portal("homegate", ("homegate.ch",), "homegate.ch"),
+        source_id="4003387945",
+        url="https://www.homegate.ch/rent/4003387945",
+        text="CHF 1,780.– 3.5 rooms Hauptstrasse 94 4450 Sissach CHF 1,780.–",
+        image_url=None,
+        published=None,
+        title="Hauptstrasse 94 4450 Sissach",
+    )
+    assert (listing.zipcode, listing.city) == (4450, "Sissach")
+
+
+def test_resolve_pending_follows_redirects_without_touching_the_portal_page():
+    import asyncio
+
+    from scout.sources.mailbox import pending_id, resolve_pending
+    from scout.models import Listing
+
+    wrapper = "https://u8489473.ct.sendgrid.net/ls/click?upn=u001.ABC"
+    pending = Listing(
+        source="homegate",
+        source_id=pending_id(wrapper),
+        url=wrapper,
+        title="x",
+        price_chf=2500,
+        raw={"resolve_url": wrapper},
+    )
+
+    fetched: list[str] = []
+
+    def handler(request: httpx.Request) -> httpx.Response:
+        fetched.append(str(request.url))
+        return httpx.Response(
+            302, headers={"location": "https://www.homegate.ch/rent/4003388035?utm=x"}
+        )
+
+    async def go():
+        async with httpx.AsyncClient(transport=httpx.MockTransport(handler)) as client:
+            return await resolve_pending(client, [pending])
+
+    resolved = asyncio.run(go())
+    assert len(resolved) == 1
+    assert resolved[0].url == "https://www.homegate.ch/rent/4003388035"
+    assert resolved[0].source_id == "4003388035"
+    assert resolved[0].price_chf == 2500  # fields from the mail survive
+    # The chain stopped at the Location header - the portal page (and its
+    # anti-bot layer) was never requested.
+    assert fetched == [wrapper]
+
+
+def test_resolve_pending_drops_chains_that_never_reach_the_portal():
+    import asyncio
+
+    from scout.sources.mailbox import pending_id, resolve_pending
+    from scout.models import Listing
+
+    wrapper = "https://u8489473.ct.sendgrid.net/ls/click?upn=u001.LOGO"
+    pending = Listing(
+        source="homegate", source_id=pending_id(wrapper), url=wrapper,
+        title="x", price_chf=1000, raw={"resolve_url": wrapper},
+    )
+
+    def handler(request: httpx.Request) -> httpx.Response:
+        return httpx.Response(200, text="not a redirect")
+
+    async def go():
+        async with httpx.AsyncClient(transport=httpx.MockTransport(handler)) as client:
+            return await resolve_pending(client, [pending])
+
+    assert asyncio.run(go()) == []
 
 
 # -- IMAP cursor -------------------------------------------------------------

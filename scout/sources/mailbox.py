@@ -45,7 +45,7 @@ from email.header import decode_header, make_header
 from email.message import Message
 from email.utils import parsedate_to_datetime
 from typing import Any
-from urllib.parse import parse_qs, unquote, urlparse, urlunparse
+from urllib.parse import parse_qs, unquote, urljoin, urlparse, urlunparse
 
 import httpx
 from selectolax.parser import HTMLParser, Node
@@ -78,9 +78,10 @@ PORTALS: tuple[Portal, ...] = (
 #: Query parameters that portals' click-trackers hide the real destination in.
 REDIRECT_PARAMS = ("url", "u", "redirect", "redirect_url", "target", "link", "destination")
 
-#: Swiss thousand separators: 2'450, 2’450, 2.450
-_PRICE_RE = re.compile(r"(?:CHF|Fr\.?)\s*([\d'’.  ]{3,12})", re.I)
-_PRICE_SUFFIX_RE = re.compile(r"([\d'’.  ]{3,12})\s*(?:CHF|Fr\.)", re.I)
+#: Thousand separators seen in real mail: 2'450, 2’450, 2.450 and the
+#: English-locale 2,500 that Homegate sends.
+_PRICE_RE = re.compile(r"(?:CHF|Fr\.?)\s*([\d'’.,  ]{3,12})", re.I)
+_PRICE_SUFFIX_RE = re.compile(r"([\d'’.,  ]{3,12})\s*(?:CHF|Fr\.)", re.I)
 _ROOMS_RE = re.compile(r"([\d]+(?:[.,]\d)?)\s*(?:Zimmer|Zi\.?|rooms?|pièces?|locali)\b", re.I)
 _SPACE_RE = re.compile(r"(\d{2,4})\s*(?:m²|m2|qm)\b", re.I)
 _PLACE_RE = re.compile(r"\b(\d{4})\s+([^\d,;|\n]{2,40}?)(?=\s*(?:[,;|\n]|$))")
@@ -129,6 +130,10 @@ class MailboxSource(Source):
                 listings.extend(parse_alert_email(raw))
             except Exception:
                 log.exception("mailbox: failed to parse one message; skipping")
+
+        # Homegate's SendGrid variant hides every listing URL behind an opaque
+        # tracker; one redirect hop per link recovers the real one.
+        listings = await resolve_pending(client, listings)
 
         log.info(
             "mailbox: %d messages -> %d listings (uid %s -> %s)",
@@ -240,7 +245,10 @@ class MailboxSource(Source):
             return None
 
     def _search(self, conn: imaplib.IMAP4, last_uid: int) -> list[int]:
-        criterion = f"{last_uid + 1}:*" if last_uid else "ALL"
+        # The UID prefix inside the criterion is not redundant: in `UID SEARCH`
+        # a bare `N:*` is a *sequence-number* set, and Gmail answers it with
+        # just the newest message. Measured, not theoretical.
+        criterion = f"UID {last_uid + 1}:*" if last_uid else "ALL"
         status, data = conn.uid("SEARCH", None, criterion)
         if status != "OK":
             raise SourceError(f"mailbox: IMAP SEARCH failed: {_first(data)!r}")
@@ -255,7 +263,17 @@ class MailboxSource(Source):
 
 
 def parse_alert_email(raw: bytes) -> list[Listing]:
-    """Extract every listing linked from one alert email."""
+    """Extract every listing linked from one alert email.
+
+    HTML and plain text are parsed *and merged*, not either/or. Real Homegate
+    mail needs both: one variant wraps every HTML link in an undecodable
+    tracker while the plain-text part carries the naked listing URL. A listing
+    found in both parts keeps the HTML version (it has the thumbnail).
+
+    Listings whose only link is an opaque redirect (SendGrid's `/ls/click`)
+    come back with `raw["resolve_url"]` set and a placeholder `source_id`; the
+    caller must resolve those over HTTP (`resolve_pending`) or drop them.
+    """
     msg = email.message_from_bytes(raw)
     portal = match_portal(msg.get("From", ""))
     if portal is None:
@@ -267,9 +285,14 @@ def parse_alert_email(raw: bytes) -> list[Listing]:
         return []
 
     published = _sent_at(msg)
+    merged: dict[str, Listing] = {}
+    if text:
+        for listing in _from_text(text, portal, published):
+            merged[listing.source_id] = listing
     if html:
-        return _from_html(html, portal, published)
-    return _from_text(text, portal, published)
+        for listing in _from_html(html, portal, published):
+            merged[listing.source_id] = listing
+    return list(merged.values())
 
 
 def match_portal(sender: str) -> Portal | None:
@@ -278,6 +301,32 @@ def match_portal(sender: str) -> Portal | None:
         if any(domain in sender for domain in portal.sender_domains):
             return portal
     return None
+
+
+#: Click-trackers whose destination is an opaque token, recoverable only by
+#: following the redirect. Seen live: Homegate via SendGrid.
+_OPAQUE_REDIRECTOR_RE = re.compile(r"https?://[^/]*\.?(sendgrid\.net)/", re.I)
+
+
+def opaque_redirect(href: str) -> str | None:
+    """The href if it is a follow-me-to-find-out tracker, else None.
+
+    Never returns anything smelling of unsubscribe: following such a link
+    would cancel the very alert this source lives on.
+    """
+    href = (href or "").strip()
+    if not _OPAQUE_REDIRECTOR_RE.match(href):
+        return None
+    if re.search(r"unsubscribe|/wf/|abmelden", href, re.I):
+        return None
+    return href
+
+
+def pending_id(wrapper_url: str) -> str:
+    """Stable placeholder id for a listing awaiting URL resolution."""
+    import hashlib
+
+    return "pending-" + hashlib.sha1(wrapper_url.encode()).hexdigest()[:12]
 
 
 def _from_html(html: str, portal: Portal, published: Any) -> list[Listing]:
@@ -289,12 +338,19 @@ def _from_html(html: str, portal: Portal, published: Any) -> list[Listing]:
     # another.
     blocks: dict[str, dict[str, Any]] = {}
     for anchor in tree.css("a[href]"):
-        url = clean_url(anchor.attributes.get("href") or "", portal)
+        href = anchor.attributes.get("href") or ""
+        url = clean_url(href, portal)
         if url is None:
-            continue
-        source_id = listing_id(url)
-        if not source_id:
-            continue
+            # Opaque tracker: fields are parseable now, the URL only after an
+            # HTTP hop. Emit a pending listing keyed on the wrapper itself.
+            wrapper = opaque_redirect(href)
+            if wrapper is None:
+                continue
+            url, source_id = wrapper, pending_id(wrapper)
+        else:
+            source_id = listing_id(url)
+            if not source_id:
+                continue
 
         node = _block(anchor)
         entry = blocks.setdefault(
@@ -323,6 +379,8 @@ def _from_html(html: str, portal: Portal, published: Any) -> list[Listing]:
             title=_headline(entry["titles"]),
         )
         if listing is not None:
+            if source_id.startswith("pending-"):
+                listing.raw["resolve_url"] = entry["url"]
             out.append(listing)
     return out
 
@@ -333,11 +391,18 @@ def _from_text(text: str, portal: Portal, published: Any) -> list[Listing]:
     seen: set[str] = set()
     matches = list(re.finditer(r"https?://\S+", text))
     for i, match in enumerate(matches):
-        url = clean_url(match.group(0).rstrip(").,>"), portal)
+        href = match.group(0).rstrip(").,>")
+        url = clean_url(href, portal)
         if url is None:
-            continue
-        source_id = listing_id(url)
-        if not source_id or source_id in seen:
+            wrapper = opaque_redirect(href)
+            if wrapper is None:
+                continue
+            url, source_id = wrapper, pending_id(wrapper)
+        else:
+            source_id = listing_id(url)
+            if not source_id:
+                continue
+        if source_id in seen:
             continue
         seen.add(source_id)
         # The text between this link and the next describes this listing.
@@ -352,6 +417,8 @@ def _from_text(text: str, portal: Portal, published: Any) -> list[Listing]:
             published=published,
         )
         if listing is not None:
+            if source_id.startswith("pending-"):
+                listing.raw["resolve_url"] = url
             out.append(listing)
     return out
 
@@ -374,6 +441,11 @@ def build_listing(
     rooms = _rooms(text)
     space = _space(text)
     zipcode, city = _place(text)
+    if not city and title:
+        # Homegate's single-listing mails put "Hauptstrasse 94 4450 Sissach"
+        # in the headline while the body text runs the town straight into the
+        # price line, where the place regex cannot end the match.
+        zipcode, city = _place(title)
 
     # A block with none of the four fields is chrome — a footer, an unsubscribe
     # link, a "more results" button — not a listing.
@@ -400,6 +472,62 @@ def build_listing(
     )
 
 
+async def resolve_pending(
+    client: httpx.AsyncClient, listings: list[Listing]
+) -> list[Listing]:
+    """Turn opaque-tracker listings into real ones by following the redirect.
+
+    Only the Location headers are read — the loop stops as soon as the chain
+    lands on the portal's own host, so the portal page itself (and its
+    anti-bot layer) is never fetched. A chain that never reaches the portal,
+    or reaches it without a listing id (logo and footer links), drops the
+    entry rather than storing a guess.
+    """
+    out: list[Listing] = []
+    for listing in listings:
+        wrapper = listing.raw.get("resolve_url") if listing.raw else None
+        if not wrapper:
+            out.append(listing)
+            continue
+
+        portal = next((p for p in PORTALS if p.source == listing.source), None)
+        resolved = await _follow(client, wrapper, portal) if portal else None
+        final = clean_url(resolved, portal) if resolved else None
+        source_id = listing_id(final) if final else None
+        if not final or not source_id:
+            log.debug("mailbox: dropped unresolvable link %.100s", wrapper)
+            continue
+        listing.url = final
+        listing.source_id = source_id
+        listing.raw.pop("resolve_url", None)
+        out.append(listing)
+
+    # Two wrappers can resolve to the same flat (headline + photo links).
+    unique: dict[str, Listing] = {}
+    for listing in out:
+        unique.setdefault(f"{listing.source}:{listing.source_id}", listing)
+    return list(unique.values())
+
+
+async def _follow(
+    client: httpx.AsyncClient, url: str, portal: Portal, hops: int = 5
+) -> str | None:
+    for _ in range(hops):
+        try:
+            resp = await client.get(url, follow_redirects=False, timeout=15.0)
+        except httpx.HTTPError as exc:
+            log.debug("mailbox: redirect hop failed for %.80s: %s", url, exc)
+            return None
+        location = resp.headers.get("location")
+        if resp.status_code not in (301, 302, 303, 307, 308) or not location:
+            return None
+        url = urljoin(url, location)
+        netloc = urlparse(url).netloc.lower()
+        if portal.link_host in netloc and not netloc.startswith(_TRACKING_SUBDOMAINS):
+            return url
+    return None
+
+
 def clean_url(href: str, portal: Portal) -> str | None:
     """Unwrap click-trackers and keep only links to this portal's listings."""
     href = (href or "").strip()
@@ -411,7 +539,14 @@ def clean_url(href: str, portal: Portal) -> str | None:
         return None
 
     parsed = urlparse(url)
-    if portal.link_host not in parsed.netloc.lower():
+    netloc = parsed.netloc.lower()
+    if portal.link_host not in netloc:
+        return None
+    # Still on a tracking subdomain means `_unwrap` found no embedded
+    # destination. Whatever digits its path carries are tracking tokens, not a
+    # listing id - treating them as one is how a homepage logo link once became
+    # a "listing" in the database.
+    if netloc.startswith(_TRACKING_SUBDOMAINS):
         return None
     # Unsubscribe / preferences / search-results links are not listings; they
     # have no id, so `listing_id` rejects them, but skip the obvious ones early.
@@ -423,14 +558,36 @@ def clean_url(href: str, portal: Portal) -> str | None:
     return urlunparse(parsed._replace(query="", fragment=""))
 
 
+#: An embedded absolute URL, found after percent-decoding a wrapper's path.
+#: Real example: tracking.notification.homegate.ch/CL0/https:%2F%2Fwww.homegate.ch%2F…/1/…
+_EMBEDDED_URL_RE = re.compile(r"https?://[^\s\"'<>]+")
+
+#: Subdomains that are click-trackers even though they sit under the portal's
+#: own domain. Never a listing themselves; only ever a wrapper around one.
+_TRACKING_SUBDOMAINS = ("tracking.", "click.", "links.", "mailing.", "email.", "mandrillapp.")
+
+
 def _unwrap(href: str, portal: Portal, depth: int) -> str | None:
-    """Follow redirect wrappers as far as the query string reveals them."""
+    """Follow redirect wrappers as far as the URL itself reveals them.
+
+    Two wrapper styles seen in real portal mail:
+    * destination in a query parameter (`?url=https%3A%2F%2F…`);
+    * destination percent-encoded into the *path*
+      (`/CL0/https:%2F%2Fwww.homegate.ch%2F…/1/0107…`).
+    A third (SendGrid's `/ls/click?upn=<opaque>`) encodes nothing recoverable
+    and is handled later by actually following the redirect over HTTP.
+    """
     if depth > 3:
         return href
     parsed = urlparse(href)
     if not parsed.scheme.startswith("http"):
         return None
-    if portal.link_host in parsed.netloc.lower() and not parsed.query:
+    netloc = parsed.netloc.lower()
+    if (
+        portal.link_host in netloc
+        and not netloc.startswith(_TRACKING_SUBDOMAINS)
+        and not parsed.query
+    ):
         return href
 
     params = parse_qs(parsed.query)
@@ -439,6 +596,12 @@ def _unwrap(href: str, portal: Portal, depth: int) -> str | None:
             candidate = unquote(value)
             if candidate.startswith("http") and portal.link_host in candidate:
                 return _unwrap(candidate, portal, depth + 1)
+
+    # Path-embedded style: decode and look for a whole URL inside.
+    for candidate in _EMBEDDED_URL_RE.findall(unquote(parsed.path)):
+        if portal.link_host in candidate:
+            return _unwrap(candidate, portal, depth + 1)
+
     return href
 
 
@@ -538,17 +701,31 @@ _CTA_RE = re.compile(
     re.I,
 )
 
+#: mail boilerplate that wraps a listing link but describes the mail, not the
+#: flat ("Here are 2 new properties that meet your search criteria.")
+_BOILERPLATE_RE = re.compile(
+    r"new propert|search criteria|suchabo|suchauftrag|treffer für|critères de recherche",
+    re.I,
+)
+
 
 def _headline(labels: list[str]) -> str:
     """The best of a listing's link texts.
 
     A listing is linked two or three times per mail: once wrapping the photo
-    (empty text), once as the headline, once as a "Details" button. The longest
-    non-button label is the headline.
+    (empty text), once as the headline, once as a "Details" button. Prefer the
+    longest label that is neither a button nor mail boilerplate; fall back to
+    boilerplate only when nothing better exists (it still beats an empty title).
     """
     usable = [
-        label for label in labels if len(label) >= 8 and not _CTA_RE.match(label)
+        label
+        for label in labels
+        if len(label) >= 8
+        and not _CTA_RE.match(label)
+        and not _BOILERPLATE_RE.search(label)
     ]
+    # No real headline is better than a fake one: the caller falls back to the
+    # first line of the block text, which at least describes the flat.
     return max(usable, key=len)[:200] if usable else ""
 
 
@@ -556,6 +733,8 @@ def _title(text: str) -> str:
     """First meaningful line; alert mails lead with the headline."""
     for line in text.splitlines():
         line = line.strip()
+        if _BOILERPLATE_RE.search(line):
+            continue
         if len(line) >= 8:
             return line[:200]
     return text[:200]

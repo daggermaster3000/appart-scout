@@ -49,10 +49,12 @@
     <a href="/listing/{{ item.id }}">
       <img src="{{ listing.images[0].thumb_url or listing.images[0].url }}" alt="" loading="lazy">
     </a>
+  {% else %}
+    <a class="noimg" href="/listing/{{ item.id }}" title="No photos from this source">🏠</a>
   {% endif %}
   <div class="body">
     <div class="row">
-      <a class="price" href="/listing/{{ item.id }}">CHF {{ listing.price_chf|chf }}</a>
+      <a class="price" href="/listing/{{ item.id }}">CHF {{ listing.price_chf|chf }}<small>/mo</small></a>
       <span>
         {% if item.is_new %}<span class="pill new">new</span>{% endif %}
         <span class="pill {{ 'good' if item.score >= 80 else 'mid' if item.score >= 65 else '' }}">
@@ -67,13 +69,13 @@
     </div>
 
     {% if item.commute_a or item.commute_b %}
-    <div class="facts">
-      🚆 {{ criteria.label_a }} <strong>{{ item.commute_a or '?' }}′</strong>
-       · {{ criteria.label_b }} <strong>{{ item.commute_b or '?' }}′</strong>
+    <div class="chips" title="Door-to-door on a weekday, arriving by {{ criteria.arrive_by }}">
+      <span class="chip">🚆 {{ criteria.label_a[:1] }} {{ item.commute_a or '?' }}′</span>
+      <span class="chip">{{ criteria.label_b[:1] }} {{ item.commute_b or '?' }}′</span>
     </div>
     {% else %}
-    <div class="facts" title="Scored on price and size only until the timetable lookup runs">
-      🚆 commute not resolved yet — not eligible for the digest
+    <div class="chips" title="Scored on price and size only until the timetable lookup runs">
+      <span class="chip na">🚆 commute pending — next runs</span>
     </div>
     {% endif %}
 
