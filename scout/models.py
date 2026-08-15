@@ -212,6 +212,12 @@ class Settings(BaseModel):
     vision_enabled: bool = True
     vision_top_n: int = 10
     vision_max_photos: int = 4
+    # Photos cost money, so only look at flats that already earned it on the
+    # metrics that are free: price, size, rooms, amenities and both commutes.
+    # A listing whose commute is still unresolved is scored on price and size
+    # alone, which floats cheap roomy places far outside the corridor to the
+    # top — photographing those is the main way this budget got wasted.
+    vision_min_score: float = 70.0
 
     # --- credentials -------------------------------------------------------
     # All of these are editable in the web UI so that changing a password does

@@ -19,13 +19,13 @@
 {% set listing = item.listing %}
 <article class="card">
   {% if listing.images %}
-    <a href="{{ item.sources[0].url if item.sources else '#' }}" target="_blank" rel="noopener">
+    <a href="/listing/{{ item.id }}">
       <img src="{{ listing.images[0].thumb_url or listing.images[0].url }}" alt="" loading="lazy">
     </a>
   {% endif %}
   <div class="body">
     <div class="row">
-      <span class="price">CHF {{ listing.price_chf|chf }}</span>
+      <a class="price" href="/listing/{{ item.id }}">CHF {{ listing.price_chf|chf }}</a>
       <span class="pill {{ 'good' if item.score >= 80 else 'mid' if item.score >= 65 else '' }}">
         {{ '%.0f'|format(item.score) }}
       </span>
@@ -78,6 +78,7 @@
     {% endif %}
 
     <div class="links">
+      <a href="/listing/{{ item.id }}">details</a>
       {% for source in item.sources %}
         <a href="{{ source.url }}" target="_blank" rel="noopener">{{ source.source }} ↗</a>
       {% endfor %}

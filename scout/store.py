@@ -322,12 +322,15 @@ def ranked(
     limit: int = 100,
     include_hidden: bool = False,
     min_score: float = 0.0,
+    listing_id: str | None = None,
 ) -> list[dict[str, Any]]:
     sql = """
         SELECT l.*, s.total AS score, s.parts, s.reasons,
                f.verdict AS verdict,
                ca.minutes AS commute_a, cb.minutes AS commute_b,
-               v.result AS vision
+               ca.origin AS commute_a_from, cb.origin AS commute_b_from,
+               ca.transfers AS commute_a_transfers, cb.transfers AS commute_b_transfers,
+               v.result AS vision, v.model AS vision_model, v.n_photos AS vision_photos
         FROM listing l
         JOIN score s ON s.listing_id = l.id
         LEFT JOIN feedback f ON f.listing_id = l.id
@@ -336,12 +339,18 @@ def ranked(
         LEFT JOIN vision v ON v.listing_id = l.id
         WHERE l.active = 1 AND s.total >= ?
     """
+    params: list[Any] = [min_score]
+    # The detail page asks for one listing by id; everything else lists.
+    if listing_id is not None:
+        sql += " AND l.id = ?"
+        params.append(listing_id)
     if not include_hidden:
         sql += " AND (f.verdict IS NULL OR f.verdict NOT IN ('hidden', 'down'))"
     sql += " ORDER BY s.total DESC LIMIT ?"
+    params.append(limit)
 
     out = []
-    for row in conn.execute(sql, (min_score, limit)).fetchall():
+    for row in conn.execute(sql, params).fetchall():
         item = dict(row)
         item["listing"] = row_to_listing(row)
         item["parts"] = json.loads(row["parts"] or "{}")
@@ -350,6 +359,37 @@ def ranked(
         item["sources"] = sources_for(conn, row["id"])
         out.append(item)
     return out
+
+
+def get_ranked(conn: sqlite3.Connection, listing_id: str) -> dict[str, Any] | None:
+    """One listing in the same shape `ranked` returns, for the detail page."""
+    rows = ranked(conn, limit=1, include_hidden=True, listing_id=listing_id)
+    return rows[0] if rows else None
+
+
+def vision_candidates(
+    conn: sqlite3.Connection, limit: int, min_score: float
+) -> list[dict[str, Any]]:
+    """Listings worth spending an OpenAI call on, best first.
+
+    Three gates, all of them about not paying to photograph a flat that was
+    never going to make the digest:
+
+    * it scores at least `min_score` on the metrics that cost nothing;
+    * both commutes are resolved — until then the score is price and size only,
+      and cheap roomy places an hour outside the corridor sit at the top;
+    * it has photos, and has not been photographed before (results are cached
+      forever, so this is once per listing, not once per run).
+    """
+    already = vision_scored_ids(conn)
+    return [
+        item
+        for item in ranked(conn, limit=limit * 10, min_score=min_score)
+        if item["id"] not in already
+        and item["listing"].images
+        and item.get("commute_a") is not None
+        and item.get("commute_b") is not None
+    ][:limit]
 
 
 def unnotified(conn: sqlite3.Connection, kind: str, limit: int, min_score: float = 0.0):

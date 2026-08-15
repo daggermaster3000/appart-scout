@@ -54,8 +54,13 @@ def render_digest(
     return subject, html
 
 
-def render_text(items: list[dict[str, Any]]) -> str:
-    """Plain-text alternative, for mail clients that refuse HTML."""
+def render_text(items: list[dict[str, Any]], criteria: Criteria) -> str:
+    """Plain-text alternative, for mail clients that refuse HTML.
+
+    Takes `criteria` so the commute lines can name the two of you, the same way
+    the HTML version does — "Ada 34' / Bo 41'" rather than an unlabelled pair of
+    numbers whose order you have to remember.
+    """
     if not items:
         return "No new listings matched your criteria."
     lines = []
@@ -66,16 +71,54 @@ def render_text(items: list[dict[str, Any]]) -> str:
             f"CHF {listing.price_chf or '?'} — "
             f"{listing.rooms or '?'} rooms — {listing.living_space_m2 or '?'} m2"
         )
-        if item.get("commute_a") or item.get("commute_b"):
-            lines.append(
-                f"   commute: {item.get('commute_a', '?')}' / {item.get('commute_b', '?')}'"
-            )
+        commute = _commute_line(item, criteria)
+        if commute:
+            lines.append(f"   {commute}")
+        for line in _vision_lines(item.get("vision")):
+            lines.append(f"   {line}")
         for reason in item.get("reasons", [])[:2]:
             lines.append(f"   - {reason}")
         for source in item.get("sources", []):
             lines.append(f"   {source['source']}: {source['url']}")
         lines.append("")
     return "\n".join(lines)
+
+
+def _commute_line(item: dict[str, Any], criteria: Criteria) -> str:
+    legs = [
+        f"{label} {item[key]}'"
+        for key, label in (
+            ("commute_a", criteria.label_a),
+            ("commute_b", criteria.label_b),
+        )
+        if item.get(key) is not None
+    ]
+    return "commute: " + " / ".join(legs) if legs else ""
+
+
+def _vision_lines(vision: dict[str, Any] | None) -> list[str]:
+    """The photo evaluation, flattened for a plain-text mail."""
+    if not vision:
+        return []
+    lines = []
+    if vision.get("verdict"):
+        lines.append(f"photos: {vision['verdict']}")
+    details = [
+        f"{name}: {vision[key]}"
+        for key, name in (
+            ("condition", "condition"),
+            ("brightness", "light"),
+            ("kitchen", "kitchen"),
+            ("bathroom", "bathroom"),
+            ("renovation_era", "renovated"),
+        )
+        if vision.get(key) and vision[key] not in ("unclear", "not shown")
+    ]
+    if details:
+        lines.append("  " + " · ".join(details))
+    for flag in vision.get("red_flags") or []:
+        lines.append(f"  ! {flag}")
+    return lines
 
 
 class EmailSender:

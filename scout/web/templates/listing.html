@@ -1,0 +1,178 @@
+{% extends "base.html" %}
+{% block content %}
+{% set listing = item.listing %}
+{% set v = item.vision %}
+
+<p class="sub"><a href="/">← back to ranked listings</a></p>
+
+<div class="row" style="align-items:flex-start;gap:12px;">
+  <h1 style="margin:0;">CHF {{ listing.price_chf|chf }}<span class="facts">/month</span></h1>
+  <span class="pill {{ 'good' if item.score >= 80 else 'mid' if item.score >= 65 else '' }}">
+    {{ '%.0f'|format(item.score) }}
+  </span>
+</div>
+<p class="sub">
+  {{ listing.title or listing.city }}
+  {% if item.verdict %}· <strong>{{ item.verdict }}</strong>{% endif %}
+</p>
+
+{% if listing.images %}
+<div class="gallery">
+  {% for image in listing.images %}
+  <a href="{{ image.url }}" target="_blank" rel="noopener" title="{{ image.caption }}">
+    <img src="{{ image.thumb_url or image.url }}" alt="{{ image.caption }}" loading="lazy">
+  </a>
+  {% endfor %}
+</div>
+<p class="hint">{{ listing.images|length }} photo{{ '' if listing.images|length == 1 else 's' }} — click one for full size.</p>
+{% else %}
+<div class="empty">This listing came without photos.</div>
+{% endif %}
+
+<h2>Facts</h2>
+<div class="fields">
+  <label><span>Rooms</span><output>{{ listing.rooms|rooms }}</output></label>
+  <label><span>Living space</span><output>{{ listing.living_space_m2 or '—' }} m²</output></label>
+  <label><span>Floor</span><output>{{ listing.floor if listing.floor is not none else '—' }}</output></label>
+  <label><span>Address</span><output>{{ listing.address or '—' }}</output></label>
+  <label><span>Available</span><output>
+    {%- if listing.available_immediately %}immediately
+    {%- elif listing.available_from %}{{ listing.available_from }}
+    {%- else %}—{% endif %}</output></label>
+  <label><span>Category</span><output>{{ listing.category|lower }}</output></label>
+  {% if listing.year_built %}<label><span>Built</span><output>{{ listing.year_built }}</output></label>{% endif %}
+  {% if listing.charges_chf %}<label><span>Charges</span><output>CHF {{ listing.charges_chf|chf }}</output></label>{% endif %}
+  {% if listing.published %}<label><span>Posted</span><output>{{ listing.published.strftime('%d.%m.%Y') }}</output></label>{% endif %}
+</div>
+
+<h2>Where it is</h2>
+{#
+  OpenStreetMap's own embed: one iframe, no API key, no JS library, nothing to
+  add to the page build. It does mean the map tiles come from openstreetmap.org,
+  so the map is the one part of this UI that needs internet — everything else
+  renders offline.
+#}
+{% if listing.lat is not none and listing.lon is not none %}
+  {% set d = 0.006 %}
+  <iframe class="map" loading="lazy" title="Map of {{ listing.address or listing.city }}"
+          src="https://www.openstreetmap.org/export/embed.html?bbox={{ listing.lon - d }},{{ listing.lat - d }},{{ listing.lon + d }},{{ listing.lat + d }}&layer=mapnik&marker={{ listing.lat }},{{ listing.lon }}"></iframe>
+  <p class="hint">
+    {{ listing.address or listing.city }} ·
+    <a href="https://www.openstreetmap.org/?mlat={{ listing.lat }}&mlon={{ listing.lon }}#map=16/{{ listing.lat }}/{{ listing.lon }}"
+       target="_blank" rel="noopener">larger map ↗</a>
+    {% if item.commute_a_from or item.commute_b_from %}
+      · nearest station {{ (item.commute_a_from or item.commute_b_from) }}
+    {% endif %}
+  </p>
+{% elif listing.address or listing.city %}
+  {#
+    Mailbox listings carry a town but no coordinates, so pin the town rather
+    than pretend to a precision the source never gave us.
+  #}
+  {% set place = (listing.address or listing.city) ~ ', Switzerland' %}
+  <p class="hint">
+    No coordinates from this source — only the address
+    <strong>{{ listing.address or listing.city }}</strong>.
+    <a href="https://www.openstreetmap.org/search?query={{ place|urlencode }}"
+       target="_blank" rel="noopener">Find it on OpenStreetMap ↗</a>
+  </p>
+{% else %}
+  <p class="hint">This listing came without any location.</p>
+{% endif %}
+
+<h2>Commute</h2>
+{% if item.commute_a is not none or item.commute_b is not none %}
+<div class="fields">
+  {% for minutes, label, target, origin, transfers in [
+      (item.commute_a, criteria.label_a, criteria.workplace_a, item.commute_a_from, item.commute_a_transfers),
+      (item.commute_b, criteria.label_b, criteria.workplace_b, item.commute_b_from, item.commute_b_transfers)] %}
+  <label>
+    <span>{{ label }} → {{ target }}</span>
+    <output>
+      {% if minutes is not none %}
+        <strong>{{ minutes }}′</strong>
+        {% if transfers %}· {{ transfers }} change{{ '' if transfers == 1 else 's' }}{% endif %}
+        {% if origin %}<br><span class="facts">from {{ origin }}</span>{% endif %}
+      {% else %}no route found{% endif %}
+    </output>
+  </label>
+  {% endfor %}
+</div>
+{% else %}
+<p class="hint">
+  Not resolved yet — the timetable lookup is rate-limited and catches up over
+  later runs. Until both legs are known this listing is scored on price and size
+  alone, and is not eligible for the digest.
+</p>
+{% endif %}
+
+<h2>What the photos show</h2>
+{% if v %}
+<div class="verdict">
+  {% if v.verdict %}<p style="margin:0 0 8px;">{{ v.verdict }}</p>{% endif %}
+  <div class="fields">
+    {% for key, label in [('score','Photo score'), ('condition','Condition'), ('brightness','Light'),
+                          ('kitchen','Kitchen'), ('bathroom','Bathroom'), ('renovation_era','Renovated')] %}
+      {% if v[key] and v[key] not in ('unclear', 'not shown') %}
+      <label><span>{{ label }}</span><output>{{ v[key] }}{% if key == 'score' %}/100{% endif %}</output></label>
+      {% endif %}
+    {% endfor %}
+  </div>
+  {% if v.red_flags %}<div class="flags">⚠ {{ v.red_flags|join('; ') }}</div>{% endif %}
+  <p class="hint">
+    {{ item.vision_model or 'model' }}, {{ item.vision_photos or 0 }} photo{{ '' if item.vision_photos == 1 else 's' }}.
+  </p>
+</div>
+{% else %}
+<p class="hint">
+  Not evaluated. Runs only spend photo calls on listings already scoring
+  {{ '%.0f'|format(settings.vision_min_score) }}+ with both commutes resolved —
+  this one has not qualified.
+</p>
+{% if listing.images %}
+<form method="post" action="/listing/{{ item.id }}/vision">
+  <button>📷 Evaluate these photos now</button>
+</form>
+{% endif %}
+{% endif %}
+
+{% if item.reasons %}
+<h2>Why it ranks here</h2>
+<ul class="reasons">{% for reason in item.reasons %}<li>{{ reason }}</li>{% endfor %}</ul>
+{% endif %}
+
+{% if item.parts %}
+<h2>Score breakdown</h2>
+<div class="bars">
+  {% for name, value in item.parts.items() %}
+  <div class="b">
+    <span>{{ name.replace('_', ' ').replace('commute a', criteria.label_a ~ ' commute').replace('commute b', criteria.label_b ~ ' commute') }}</span>
+    <span class="track"><span class="fill" style="width: {{ (value * 100)|round }}%"></span></span>
+    <span>{{ (value * 100)|round|int }}</span>
+  </div>
+  {% endfor %}
+</div>
+{% endif %}
+
+{% if listing.description %}
+<h2>Description</h2>
+<p class="description">{{ listing.description }}</p>
+{% endif %}
+
+<h2>Open on the portal</h2>
+<div class="links">
+  {% for source in item.sources %}
+    <a href="{{ source.url }}" target="_blank" rel="noopener">{{ source.source }} ↗</a>
+  {% endfor %}
+</div>
+
+<div class="acts" style="margin-top:22px;">
+  {% for verdict, label in [('up', '👍 Good'), ('shortlist', '⭐ Shortlist'), ('hidden', '✕ Dismiss')] %}
+  <form method="post" action="/listing/{{ item.id }}/feedback">
+    <input type="hidden" name="verdict" value="{{ verdict }}">
+    <input type="hidden" name="back" value="/listing/{{ item.id }}">
+    <button>{{ label }}</button>
+  </form>
+  {% endfor %}
+</div>
+{% endblock %}

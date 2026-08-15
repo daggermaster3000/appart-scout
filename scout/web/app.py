@@ -21,9 +21,20 @@ from fastapi.templating import Jinja2Templates
 
 from .. import scheduler, store
 from ..config import get_config
-from ..db import connect, init_db, load_criteria, load_settings, save_criteria, save_settings
+from ..db import (
+    connect,
+    criteria_version,
+    init_db,
+    load_criteria,
+    load_settings,
+    save_criteria,
+    save_settings,
+)
 from ..models import AMENITIES, Criteria, Settings
+from ..scoring import score
+from ..sources.base import make_client
 from ..sources.registry import SOURCES
+from ..vision import VisionScorer
 
 log = logging.getLogger(__name__)
 
@@ -95,11 +106,66 @@ def dashboard(request: Request, show_hidden: bool = False, limit: int = 60):
     )
 
 
+@app.get("/listing/{listing_id}", response_class=HTMLResponse)
+def listing_detail(request: Request, listing_id: str):
+    """Everything known about one flat: all photos, the AI read, the breakdown.
+
+    The dashboard card is a summary with one thumbnail; this is where you
+    actually look at a place without leaving for the portal — which matters more
+    now that photos are only evaluated automatically for top scorers.
+    """
+    with connect() as conn:
+        item = store.get_ranked(conn, listing_id)
+    if item is None:
+        raise HTTPException(status_code=404, detail="no such listing")
+    return _page(request, "listing", item=item)
+
+
 @app.post("/listing/{listing_id}/feedback")
-def feedback(listing_id: str, verdict: str = Form(...)):
+def feedback(listing_id: str, verdict: str = Form(...), back: str = Form("/")):
     with connect() as conn:
         store.set_feedback(conn, listing_id, verdict)
-    return RedirectResponse("/", status_code=303)
+    return RedirectResponse(_safe_redirect(back), status_code=303)
+
+
+@app.post("/listing/{listing_id}/vision")
+async def listing_vision(listing_id: str):
+    """Evaluate this listing's photos now, regardless of where it ranks.
+
+    The scheduled run only spends photo calls on listings that already score
+    well on everything else. This is the manual override for the one you are
+    looking at.
+    """
+    with connect() as conn:
+        item = store.get_ranked(conn, listing_id)
+        criteria = load_criteria(conn)
+        settings = load_settings(conn)
+        version = criteria_version(conn)
+    if item is None:
+        raise HTTPException(status_code=404, detail="no such listing")
+
+    scorer = VisionScorer(settings=settings)
+    if not scorer.available:
+        raise HTTPException(status_code=400, detail="no OpenAI key configured")
+
+    listing = item["listing"]
+    async with make_client() as client:
+        result, n_photos = await scorer.score_listing(
+            client, listing, criteria, settings.vision_max_photos
+        )
+    if result is not None:
+        with connect() as conn:
+            store.save_vision(conn, listing_id, scorer.model, result, n_photos)
+            legs = store.load_commutes(conn, listing_id)
+            store.save_score(
+                conn, listing_id, score(listing, criteria, legs, result), version
+            )
+    return RedirectResponse(f"/listing/{listing_id}", status_code=303)
+
+
+def _safe_redirect(target: str) -> str:
+    """Only ever redirect within this app, never to a URL a form supplied."""
+    return target if target.startswith("/") and not target.startswith("//") else "/"
 
 
 @app.post("/run")

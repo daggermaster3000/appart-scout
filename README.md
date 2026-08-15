@@ -224,7 +224,7 @@ pytest                             # 77 tests, no network
 ```
 sources/*  ──►  normalize  ──►  dedup  ──►  hard filters  ──►  commute  ──►  score
                                                                              │
-                                            photos (top N only) ─────────────┤
+                              photos (only listings already scoring well) ───┤
                                                                              ▼
                                                             SQLite ──► digest email
                                                                   └──► web UI
@@ -242,18 +242,37 @@ sources/*  ──►  normalize  ──►  dedup  ──►  hard filters  ─�
 - **Scoring** normalises each dimension to 0–1 and takes a weighted mean.
   Sub-scores that can't be computed yet are *dropped from the mean*, not counted
   as zero — a flat is never punished for data we haven't fetched.
-- **Photos** are evaluated only for the top N previously-unseen listings, at most
-  4 images each, downscaled to 768 px, and the result is cached forever. Cost
-  tracks new listings, not catalogue size — cents per run.
+- **Photos** are the only paid step, so they are spent last and narrowly. A
+  listing is photographed only once it has **earned it on the free metrics**:
+  a score at or above `vision_min_score` (70 by default) *and* both commutes
+  resolved. That second condition matters more than it sounds — until the
+  timetable lookup runs, a flat is scored on price and size alone, so cheap
+  roomy places an hour outside the corridor sit at the very top of the ranking.
+  Photographing those was the main way the budget got spent on flats that then
+  dropped out. At most 4 images each, downscaled to 768 px, cached forever, so
+  cost tracks newly-qualifying listings rather than catalogue size.
+
+  Any listing can still be evaluated on demand from its **details page**,
+  whatever it scores.
+
+- **The web UI** lists ranked cards; clicking one opens a details page with
+  every photo, the full commute breakdown per person, the photo evaluation, the
+  score bars, the description, and a map. The map is an OpenStreetMap embed —
+  no API key, no JS library — and is the one part of the UI that needs
+  internet. Listings that arrived by alert email carry a town but no
+  coordinates, so those get an address search link instead of a pin, rather
+  than a map claiming a precision the source never gave.
 
 ## Cost
 
 - `transport.opendata.ch` — free, no key, rate-limited (scout backs off and
   resumes next run).
 - Flatfox — free.
-- OpenAI — the only thing you pay for. At the defaults (10 listings × 4 low-detail
-  images per run) it is a few cents per run. Turn it off in **Settings** and
-  everything else still works.
+- OpenAI — the only thing you pay for, and only for listings that already score
+  70+ with both commutes resolved. At the defaults (at most 10 listings × 4
+  low-detail images per run, cached forever) it is a few cents per run, and most
+  runs qualify nobody at all. Turn it off in **Settings** and everything else
+  still works.
 
 ## Layout
 

@@ -212,12 +212,16 @@ async def _run_vision(conn, client, criteria, settings, version, commute) -> int
         log.info("vision skipped: no OPENAI_API_KEY configured")
         return 0
 
-    already = store.vision_scored_ids(conn)
-    candidates = [
-        item
-        for item in store.ranked(conn, limit=settings.vision_top_n * 4)
-        if item["id"] not in already and item["listing"].images
-    ][: settings.vision_top_n]
+    candidates = store.vision_candidates(
+        conn, limit=settings.vision_top_n, min_score=settings.vision_min_score
+    )
+    if not candidates:
+        log.info(
+            "vision skipped: nothing scoring %.0f+ with both commutes resolved and "
+            "photos it has not already seen",
+            settings.vision_min_score,
+        )
+        return 0
 
     scored = 0
     for item in candidates:
@@ -254,7 +258,7 @@ def _notify(settings: Settings, criteria: Criteria) -> int:
             )
             if urgent:
                 subject, html = render_digest(urgent, criteria, subject_prefix="Strong match")
-                sender.send(settings.recipients, subject, html, render_text(urgent))
+                sender.send(settings.recipients, subject, html, render_text(urgent, criteria))
                 for item in urgent:
                     store.mark_notified(conn, item["id"], "instant", item["score"])
                     store.mark_notified(conn, item["id"], "digest", item["score"])
@@ -264,7 +268,7 @@ def _notify(settings: Settings, criteria: Criteria) -> int:
             items = store.unnotified(conn, "digest", limit=settings.digest_size)
             if items or settings.send_when_empty:
                 subject, html = render_digest(items, criteria)
-                sender.send(settings.recipients, subject, html, render_text(items))
+                sender.send(settings.recipients, subject, html, render_text(items, criteria))
                 for item in items:
                     store.mark_notified(conn, item["id"], "digest", item["score"])
                 _mark_digest_sent(conn)

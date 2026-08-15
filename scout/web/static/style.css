@@ -61,7 +61,8 @@ h2 { font-size: 16px; margin: 28px 0 12px; padding-bottom: 6px; border-bottom: 1
 .card img { width: 100%; height: 180px; object-fit: cover; display: block; background: var(--line); }
 .card .body { padding: 13px 15px; display: flex; flex-direction: column; gap: 8px; flex: 1; }
 .row { display: flex; justify-content: space-between; align-items: center; gap: 10px; }
-.price { font-size: 17px; font-weight: 650; }
+.price { font-size: 17px; font-weight: 650; color: var(--ink); text-decoration: none; }
+a.price:hover { color: var(--accent); }
 .facts { color: var(--muted); font-size: 13px; }
 .pill { font-size: 12px; font-weight: 650; color: #fff; padding: 3px 9px; border-radius: 11px; background: var(--muted); }
 .pill.good { background: var(--good); } .pill.mid { background: var(--warn); }
@@ -107,3 +108,12 @@ code { background: var(--bg); padding: 1px 5px; border-radius: 4px; font-size: 1
 
 footer { color: var(--muted); font-size: 12px; padding: 16px; text-align: center; }
 .empty { background: var(--card); border: 1px solid var(--line); border-radius: var(--radius); padding: 40px; text-align: center; color: var(--muted); }
+
+/* --- listing detail --- */
+.gallery { display: grid; grid-template-columns: repeat(auto-fill, minmax(190px, 1fr)); gap: 8px; }
+.gallery img { width: 100%; height: 145px; object-fit: cover; display: block; border-radius: 6px; background: var(--line); }
+.gallery a:hover img { outline: 2px solid var(--accent); outline-offset: -2px; }
+/* Read-only counterpart to an <input>, so the facts grid reuses .fields. */
+output { display: block; font-size: 14px; color: var(--ink); }
+.description { font-size: 14px; line-height: 1.55; white-space: pre-wrap; color: var(--ink); }
+.map { width: 100%; height: 320px; border: 1px solid var(--line); border-radius: var(--radius); display: block; }

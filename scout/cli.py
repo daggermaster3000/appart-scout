@@ -176,7 +176,7 @@ def digest(
         return
 
     EmailSender(get_config().resolve(settings)).send(
-        settings.recipients, subject, html, render_text(items)
+        settings.recipients, subject, html, render_text(items, criteria)
     )
     with connect() as conn:
         for item in items:

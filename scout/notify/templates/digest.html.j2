@@ -64,14 +64,44 @@
         </p>
         {% endif %}
 
-        {% if item.vision and item.vision.verdict %}
-        <p style="margin:0 0 10px;padding:9px 11px;background:#f7f8fa;border-left:3px solid #ccc;
-                  font-size:13px;color:#333;border-radius:0 4px 4px 0;">
-          📷 {{ item.vision.verdict }}
-          {% if item.vision.red_flags %}
-          <br><span style="color:#a33;">⚠ {{ item.vision.red_flags|join('; ') }}</span>
-          {% endif %}
-        </p>
+        {% if item.vision %}
+        {% set v = item.vision %}
+        <table role="presentation" width="100%" cellpadding="0" cellspacing="0"
+               style="margin:0 0 12px;background:#f7f8fa;border-left:3px solid #8a8f98;border-radius:0 5px 5px 0;">
+          <tr><td style="padding:10px 12px;">
+            <p style="margin:0 0 6px;font-size:11px;font-weight:600;letter-spacing:.4px;
+                      text-transform:uppercase;color:#8a8f98;">
+              📷 What the photos show
+              {% if v.score %}<span style="color:#555;">· {{ v.score }}/100</span>{% endif %}
+            </p>
+            {% if v.verdict %}
+            <p style="margin:0 0 6px;font-size:13px;color:#222;line-height:1.45;">{{ v.verdict }}</p>
+            {% endif %}
+            {#
+              Only state what the model actually saw. "unclear" and "not shown"
+              are its way of saying it could not tell, and printing those adds
+              length without adding information.
+            #}
+            {% set details = [] %}
+            {% for key, label in [('condition','Condition'), ('brightness','Light'),
+                                  ('kitchen','Kitchen'), ('bathroom','Bathroom'),
+                                  ('renovation_era','Renovated')] %}
+              {% if v[key] and v[key] not in ('unclear', 'not shown') %}
+                {% set _ = details.append(label ~ ' ' ~ v[key]) %}
+              {% endif %}
+            {% endfor %}
+            {% if details %}
+            <p style="margin:0;font-size:12px;color:#555;line-height:1.5;">
+              {{ details|join(' &nbsp;·&nbsp; ') }}
+            </p>
+            {% endif %}
+            {% if v.red_flags %}
+            <p style="margin:6px 0 0;font-size:12px;color:#a33;line-height:1.5;">
+              ⚠ {{ v.red_flags|join('; ') }}
+            </p>
+            {% endif %}
+          </td></tr>
+        </table>
         {% endif %}
 
         {% if item.reasons %}
