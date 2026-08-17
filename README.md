@@ -216,7 +216,7 @@ scout digest --dry-run -o d.html   # render the email, open it in a browser
 scout digest --send                # really send it
 scout probe comparis               # dump what a portal actually returned
 scout run                          # the real thing
-pytest                             # 77 tests, no network
+pytest                             # 200 tests, no network
 ```
 
 ## How it works
@@ -264,18 +264,51 @@ sources/*  ──►  normalize  ──►  dedup  ──►  hard filters  ─�
   rest. Commute lookups are spent on the highest-provisionally-scored listings
   first, so the best-fits view fills in best-first rather than randomly.
 
+- **The corridor map** answers the question that comes *before* "is this flat
+  any good?" — where should we even be looking? It plots every train station
+  between the two workplaces and colours it by the commute it buys, with four
+  readings of the same two numbers: each partner separately, the longer of the
+  two, and **fairness** — who is carrying the extra minutes, which is the
+  number a couple actually argues about and the one no portal will ever show
+  you. A **Communes** toggle collapses each municipality to its best station;
+  "only within our limits" hides anything over the ceilings; and a table view
+  carries the same numbers without the colour.
+
+  Station geometry comes from **SBB's own open service-point register**
+  (data.sbb.ch) rather than the timetable API: it is one unmetered paged GET,
+  where discovering 350 stations through the timetable's "nearest station to
+  this point" would have cost 350 metered calls before pricing a single trip.
+  That register also does double duty — a listing with coordinates now finds
+  its station by arithmetic against a local table instead of an API call.
+
+  Pricing is deliberately a **batch**, not a corridor: two timetable calls per
+  station is ~700 for the default bounds, far past what the free API tolerates
+  in one sitting. So each click prices the next 60 (`corridor_batch_size`),
+  nearest-the-workplace-line first so the axis reads after one batch, and the
+  page fills in live while it runs. Every answer lands in the same route cache
+  the listings use, so clicking again continues rather than repeats.
+
 - **The listing details page** — clicking any card — shows
   every photo, the full commute breakdown per person, the photo evaluation, the
   score bars, the description, and a map. The map is an OpenStreetMap embed —
-  no API key, no JS library — and is the one part of the UI that needs
-  internet. Listings that arrived by alert email carry a town but no
+  no API key, no JS library. It and the corridor map are the parts of the UI
+  that need internet. Listings that arrived by alert email carry a town but no
   coordinates, so those get an address search link instead of a pin, rather
   than a map claiming a precision the source never gave.
 
 ## Cost
 
 - `transport.opendata.ch` — free, no key, rate-limited (scout backs off and
-  resumes next run).
+  resumes next run). When it does throttle, routing falls back to
+  `timetable.search.ch`, which answers the same question from the same Swiss
+  timetable on a separate quota — so a busy afternoon slows the map down rather
+  than stopping it. (SBB's own site is not usable as a third source:
+  `www.sbb.ch` returns 403 to anything that is not a real browser, and its
+  timetable is a client-side app with no stable link to a result set. What SBB
+  do publish openly is the station register, which is where the map's geometry
+  comes from.)
+- `data.sbb.ch` — free, no key, not metered like the timetable API. One paged
+  request per ~100 stations, then cached in SQLite forever.
 - Flatfox — free.
 - OpenAI — the only thing you pay for, and only for listings that already score
   70+ with both commutes resolved. At the defaults (at most 10 listings × 4
@@ -289,13 +322,15 @@ sources/*  ──►  normalize  ──►  dedup  ──►  hard filters  ─�
 scout/
   sources/       one adapter per portal + the shared browser/generic bases
   browser.py     Playwright session, anti-bot detection, hydration-state extraction
-  geo.py         commute times + caching
+  geo.py         commute times + caching, with a second timetable as fallback
+  stations.py    SBB's open station register — the corridor map's geometry
+  corridor.py    the corridor map: what to price next, and what to draw
   scoring.py     hard filters and the weighted score
   dedup.py       cross-portal merging
   vision.py      OpenAI photo evaluation
   pipeline.py    one full run
   web/           FastAPI + Jinja2 UI (no build step)
-tests/           77 tests against recorded real payloads, no network
+tests/           200 tests against recorded real payloads, no network
 ```
 
 ## When a portal breaks

@@ -171,7 +171,54 @@ output { display: block; font-size: 14px; color: var(--ink); }
 .description { font-size: 14px; line-height: 1.55; white-space: pre-wrap; color: var(--ink); }
 .map { width: 100%; height: 320px; border: 1px solid var(--line); border-radius: var(--radius); display: block; }
 
+/* --- corridor map --- */
+/* One row of controls above the map, as close to the data as they can sit. */
+.cor-bar { display: flex; flex-wrap: wrap; align-items: center; gap: 10px; margin-bottom: 10px; }
+.seg { display: flex; border: 1px solid var(--line); border-radius: 8px; overflow: hidden; }
+.seg button {
+  border: 0; border-right: 1px solid var(--line); border-radius: 0;
+  padding: 7px 12px; font-size: 13px; color: var(--muted); background: var(--card);
+}
+.seg button:last-child { border-right: 0; }
+.seg button.on { background: var(--accent-soft); color: var(--accent); font-weight: 650; }
+.cor-check { display: flex; align-items: center; gap: 6px; font-size: 13px; color: var(--muted); }
+.cor-fill { margin-left: auto; display: flex; gap: 8px; }
+.cor-fill button.ghost { color: var(--muted); font-size: 13px; padding: 7px 12px; }
+.cor-status { font-size: 13px; color: var(--muted); margin: 0 0 10px; }
+
+.corridor-map {
+  height: 540px; border: 1px solid var(--line); border-radius: var(--radius);
+  background: var(--card); overflow: hidden;
+}
+.cor-offline { padding: 40px; text-align: center; color: var(--muted); }
+
+/* Legend below the map: swatch then label, in ink rather than in the hue. */
+.cor-legend { display: flex; flex-wrap: wrap; align-items: center; gap: 6px 16px; margin: 12px 0 4px; }
+.cor-legend-title { font-size: 13px; font-weight: 650; margin-right: 4px; }
+.cor-key { display: flex; align-items: center; gap: 6px; font-size: 12px; color: var(--muted); }
+.cor-key i { width: 13px; height: 13px; border-radius: 50%; display: inline-block; }
+.cor-key i.cor-pending { width: 8px; height: 8px; opacity: .55; }
+
+.cor-table-wrap { margin-top: 18px; }
+.cor-table-wrap summary { font-size: 13px; color: var(--muted); margin-bottom: 10px; }
+.cor-table-wrap td, .cor-table-wrap th { font-variant-numeric: tabular-nums; }
+
+/* Leaflet's own chrome, pulled onto this app's palette. */
+.cor-anchor span {
+  display: inline-block; white-space: nowrap; transform: translate(-50%, -160%);
+  background: var(--ink); color: var(--card); font-size: 11px; font-weight: 650;
+  padding: 3px 7px; border-radius: 6px;
+}
+.leaflet-container { background: var(--bg); font: inherit; }
+.leaflet-tooltip {
+  background: var(--card); color: var(--ink); border: 1px solid var(--line);
+  box-shadow: var(--shadow-lift); font-size: 12px;
+}
+.leaflet-tooltip-top:before { border-top-color: var(--line); }
+
 @media (max-width: 640px) {
+  .corridor-map { height: 420px; }
+  .cor-fill { margin-left: 0; }
   .grid { grid-template-columns: 1fr; }
   main { padding-top: 16px; }
   .bar { gap: 10px; }

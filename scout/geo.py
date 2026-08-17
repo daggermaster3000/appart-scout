@@ -14,12 +14,25 @@ day, so everything is cached in SQLite:
   30-day TTL. Every listing in the same town shares one lookup.
 
 After the first run almost every listing resolves entirely from cache.
+
+When opendata.ch does throttle anyway - which the corridor map makes far more
+likely, because it prices hundreds of stations rather than dozens of towns -
+routing falls back to search.ch's timetable API. It answers the same question
+from the same Swiss timetable, on a separate quota, so one exhausted service no
+longer stops the map filling in.
+
+SBB's own site is not usable as a third source: www.sbb.ch answers 403 to
+anything that is not a real browser (Akamai), and its timetable is a client-side
+app with no stable deep link to a result set. What SBB *do* publish openly is
+the station register itself, and that is where `stations.py` gets the map's
+geometry from.
 """
 
 from __future__ import annotations
 
 import asyncio
 import logging
+import math
 import re
 import sqlite3
 import statistics
@@ -32,6 +45,8 @@ from .models import Commute, Criteria, Listing
 log = logging.getLogger(__name__)
 
 API = "https://transport.opendata.ch/v1"
+#: Second opinion on the same timetable, used only once opendata.ch throttles.
+SEARCH_CH_API = "https://timetable.search.ch/api/route.json"
 ROUTE_TTL = timedelta(days=30)
 STATION_TTL = timedelta(days=365)  # stations do not move
 # A *failed* lookup is not a fact about the world - it is usually a rate limit
@@ -40,6 +55,10 @@ STATION_TTL = timedelta(days=365)  # stations do not move
 STATION_MISS_TTL = timedelta(hours=6)
 
 WALK_METRES_PER_MIN = 80.0
+#: Furthest a listing may be from a registered train station before we stop
+#: answering from the local table and ask the timetable API instead - which also
+#: knows bus and tram stops, and may well find something closer.
+MAX_LOCAL_WALK_M = 1600.0
 #: give up on the timetable API for this run after this many 429s in a row
 MAX_CONSECUTIVE_429 = 5
 _DURATION_RE = re.compile(r"(?:(\d+)d)?(\d{2}):(\d{2}):(\d{2})")
@@ -78,8 +97,23 @@ class CommuteService:
         self.rate_limit = rate_limit
         self._lock = asyncio.Lock()
         self.api_calls = 0
+        self.searchch_calls = 0
         self._consecutive_failures = 0
+        self._searchch_failures = 0
         self.throttled = False
+        #: set once the fallback has failed as often as the primary did; at that
+        #: point there is no timetable left to ask.
+        self.searchch_throttled = False
+
+    @property
+    def calls(self) -> int:
+        """Timetable requests made this run, across both services."""
+        return self.api_calls + self.searchch_calls
+
+    @property
+    def exhausted(self) -> bool:
+        """True only when *neither* timetable service is answering any more."""
+        return self.throttled and self.searchch_throttled
 
     # -- HTTP -------------------------------------------------------------
 
@@ -145,6 +179,18 @@ class CommuteService:
             name, walk = cached
             return name, walk
 
+        # The SBB station register (see `stations.py`) is a local table with
+        # every corridor station's coordinates in it, so for a listing that has
+        # coordinates the nearest station is arithmetic, not an API call. This
+        # is what stops a cold database burning its whole timetable budget on
+        # geocoding before it prices a single trip.
+        if listing.lat is not None and listing.lon is not None:
+            local = self._nearest_local(listing.lat, listing.lon)
+            if local is not None:
+                name, walk = local
+                self._store_station(key, name, walk)
+                return name, walk
+
         try:
             data = await self._get("locations", params)
         except Exception as exc:
@@ -166,6 +212,30 @@ class CommuteService:
 
         self._store_station(key, None, 0)
         return None, 0
+
+    def _nearest_local(self, lat: float, lon: float) -> tuple[str, int] | None:
+        """Nearest registered train station, or None if the table cannot answer.
+
+        Deliberately gives up rather than guessing: beyond `MAX_LOCAL_WALK_M`
+        the answer would be a station nobody would walk to, and the timetable
+        API - which also knows about bus and tram stops - has a better one.
+        """
+        # A degree of latitude is ~111 km; this box is a cheap index-friendly
+        # prefilter around the real distance test below.
+        span = MAX_LOCAL_WALK_M / 111_000.0
+        rows = self.conn.execute(
+            "SELECT name, lat, lon FROM corridor_station "
+            "WHERE lat BETWEEN ? AND ? AND lon BETWEEN ? AND ?",
+            (lat - span, lat + span, lon - span * 1.5, lon + span * 1.5),
+        ).fetchall()
+        best: tuple[float, str] | None = None
+        for row in rows:
+            metres = _metres_between(lat, lon, row["lat"], row["lon"])
+            if metres <= MAX_LOCAL_WALK_M and (best is None or metres < best[0]):
+                best = (metres, row["name"])
+        if best is None:
+            return None
+        return best[1], int(round(best[0] / WALK_METRES_PER_MIN))
 
     def _cached_station(self, key: str) -> tuple[str | None, int] | None:
         row = self.conn.execute(
@@ -200,27 +270,22 @@ class CommuteService:
         if cached is not None:
             return cached
 
-        try:
-            data = await self._get(
-                "connections",
-                {
-                    "from": origin,
-                    "to": destination,
-                    "date": _next_weekday().isoformat(),
-                    "time": arrive_by,
-                    "isArrivalTime": 1,
-                    "limit": 5,
-                },
-            )
-        except Exception as exc:
-            log.warning("route %s -> %s failed: %s", origin, destination, exc)
-            return None
+        # Living at the workplace's own station is a real answer, and it is the
+        # one the timetable API refuses to give: asked to route Basel SBB to
+        # Basel SBB it returns nothing. Recording it keeps the corridor map from
+        # leaving a permanent hole exactly where the two anchors sit - and from
+        # re-queueing them, at distance zero from the line, in every batch.
+        if origin.strip().casefold() == destination.strip().casefold():
+            self._store_route(origin, destination, arrive_by, 0, 0)
+            return Commute(minutes=0, transfers=0, origin_station=origin)
 
-        durations: list[tuple[int, int]] = []
-        for conn_ in data.get("connections") or []:
-            minutes = parse_duration(conn_.get("duration") or "")
-            if minutes:
-                durations.append((minutes, int(conn_.get("transfers") or 0)))
+        durations = await self._opendata_durations(origin, destination, arrive_by)
+        if durations is None:
+            durations = await self._searchch_durations(origin, destination, arrive_by)
+        if durations is None:
+            # Neither service answered at all. That is a fact about them, not
+            # about this route, so nothing is cached and a later run retries.
+            return None
         if not durations:
             self._store_route(origin, destination, arrive_by, None, 0)
             return None
@@ -236,6 +301,83 @@ class CommuteService:
 
         self._store_route(origin, destination, arrive_by, minutes, transfers)
         return Commute(minutes=minutes, transfers=transfers, origin_station=origin)
+
+    async def _opendata_durations(
+        self, origin: str, destination: str, arrive_by: str
+    ) -> list[tuple[int, int]] | None:
+        """(minutes, transfers) per connection, or None if the service failed."""
+        try:
+            data = await self._get(
+                "connections",
+                {
+                    "from": origin,
+                    "to": destination,
+                    "date": _next_weekday().isoformat(),
+                    "time": arrive_by,
+                    "isArrivalTime": 1,
+                    "limit": 5,
+                },
+            )
+        except Exception as exc:
+            log.debug("opendata.ch route %s -> %s failed: %s", origin, destination, exc)
+            return None
+
+        out: list[tuple[int, int]] = []
+        for connection in data.get("connections") or []:
+            minutes = parse_duration(connection.get("duration") or "")
+            if minutes:
+                out.append((minutes, int(connection.get("transfers") or 0)))
+        return out
+
+    async def _searchch_durations(
+        self, origin: str, destination: str, arrive_by: str
+    ) -> list[tuple[int, int]] | None:
+        """Same question, asked of search.ch.
+
+        Durations arrive in seconds, and `legs` includes a final arrival-only
+        entry, so a direct train has two legs and zero changes.
+        """
+        if self.searchch_throttled:
+            return None
+        try:
+            async with self._lock:
+                await asyncio.sleep(self.rate_limit)
+                self.searchch_calls += 1
+                resp = await self.client.get(
+                    SEARCH_CH_API,
+                    params={
+                        "from": origin,
+                        "to": destination,
+                        "date": _next_weekday().isoformat(),
+                        "time": arrive_by,
+                        "time_type": "arrival",
+                        "num": 4,
+                        "show_delays": 0,
+                    },
+                    timeout=25.0,
+                )
+            resp.raise_for_status()
+            data = resp.json()
+        except Exception as exc:
+            self._searchch_failures += 1
+            if self._searchch_failures >= MAX_CONSECUTIVE_429:
+                self.searchch_throttled = True
+                log.warning(
+                    "search.ch failed %d times in a row; no timetable service left "
+                    "for this run", self._searchch_failures
+                )
+            log.warning("search.ch route %s -> %s failed: %s", origin, destination, exc)
+            return None
+
+        self._searchch_failures = 0
+        out: list[tuple[int, int]] = []
+        for connection in data.get("connections") or []:
+            seconds = connection.get("duration")
+            if not isinstance(seconds, (int, float)) or seconds <= 0:
+                continue
+            transfers = max(0, len(connection.get("legs") or []) - 2)
+            out.append((int(round(seconds / 60.0)), transfers))
+        return out
 
     def _cached_route(self, origin: str, destination: str, arrive_by: str) -> Commute | None:
         row = self.conn.execute(
@@ -290,6 +432,25 @@ class CommuteService:
                 origin_station=f"{station} (+{walk}' walk)" if walk else station,
             )
         return legs
+
+
+def retry_due(stamp: str | None) -> bool:
+    """Whether a route that came back empty is worth asking about again.
+
+    An empty answer is usually a throttled or flaky request rather than a place
+    with no trains, so it is retried - but not immediately, or the corridor map
+    would spend every batch re-asking the same handful of failures instead of
+    working through the stations it has not tried yet.
+    """
+    return stamp is None or _expired(stamp, STATION_MISS_TTL)
+
+
+def _metres_between(lat1: float, lon1: float, lat2: float, lon2: float) -> float:
+    """Equirectangular approximation - exact enough over a few kilometres."""
+    mean_lat = math.radians((lat1 + lat2) / 2.0)
+    x = math.radians(lon2 - lon1) * math.cos(mean_lat)
+    y = math.radians(lat2 - lat1)
+    return math.hypot(x, y) * 6_371_000.0
 
 
 def _now() -> str:

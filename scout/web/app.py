@@ -7,6 +7,7 @@ stylesheet.
 
 from __future__ import annotations
 
+import json
 import logging
 import secrets
 from contextlib import asynccontextmanager
@@ -20,7 +21,7 @@ from fastapi.security import HTTPBasic, HTTPBasicCredentials
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 
-from .. import scheduler, store
+from .. import corridor, scheduler, store
 from ..config import get_config
 from ..db import (
     connect,
@@ -198,6 +199,51 @@ def _safe_redirect(target: str) -> str:
 async def run_now():
     await scheduler.trigger_now()
     return RedirectResponse("/runs", status_code=303)
+
+
+# --------------------------------------------------------------------------
+# corridor map
+# --------------------------------------------------------------------------
+
+
+@app.get("/corridor", response_class=HTMLResponse)
+def corridor_map(request: Request):
+    """Where to look, rather than what to take: the corridor, coloured by commute."""
+    with connect() as conn:
+        criteria = load_criteria(conn)
+        data = corridor.public_map(conn, criteria)
+    return _page(request, "corridor", data=data, map_json=_embed_json(data))
+
+
+def _embed_json(data: Any) -> str:
+    """JSON safe to drop inside a <script> block.
+
+    Station names come from SBB and the labels come from a form, so escaping
+    `<` is what stops a stray `</script>` ending the block early.
+    """
+    return json.dumps(data).replace("<", "\\u003c")
+
+
+@app.get("/api/corridor")
+def corridor_data():
+    """Same payload as JSON, so the page can refresh while a batch runs."""
+    with connect() as conn:
+        data = corridor.public_map(conn, load_criteria(conn))
+    data["busy"] = corridor.is_busy()
+    return data
+
+
+@app.post("/corridor/fill")
+async def corridor_fill(refresh: str = Form(""), batch: int = Form(0)):
+    """Load the station list and/or price the next batch, in the background.
+
+    Pricing a batch takes minutes — the timetable API is rate-limited on
+    purpose — so this returns straight away and the page polls `/api/corridor`.
+    """
+    if corridor.is_busy():
+        raise HTTPException(status_code=409, detail="a batch is already running")
+    await corridor.trigger(refresh=bool(refresh), batch=batch or None)
+    return RedirectResponse("/corridor", status_code=303)
 
 
 # --------------------------------------------------------------------------

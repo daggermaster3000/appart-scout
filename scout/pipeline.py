@@ -98,6 +98,7 @@ async def run_once(
                 cutoff = (datetime.now(timezone.utc) - timedelta(days=3)).isoformat()
                 stats["deactivated"] = store.deactivate_stale(conn, cutoff)
                 stats["commute_api_calls"] = commute.api_calls
+                stats["commute_fallback_calls"] = commute.searchch_calls
                 stats["kept"] = len(kept_ids)
                 stats["new"] = len(new_ids)
 
@@ -210,7 +211,9 @@ async def _rank(conn, criteria: Criteria, settings: Settings, commute, version, 
     unresolved.sort(key=lambda entry: entry[0], reverse=True)
     resolved = 0
     for _provisional, listing_id, listing in unresolved:
-        if commute.throttled or commute.api_calls >= settings.max_commute_calls_per_run:
+        # `exhausted`, not `throttled`: opendata.ch giving up no longer ends the
+        # pass, because search.ch answers the same question on its own quota.
+        if commute.exhausted or commute.calls >= settings.max_commute_calls_per_run:
             break
         legs = await commute.commutes(listing)
         store.save_commutes(conn, listing_id, legs)

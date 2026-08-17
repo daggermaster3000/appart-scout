@@ -92,6 +92,21 @@ CREATE TABLE IF NOT EXISTS route_cache (
     PRIMARY KEY (origin, destination, arrive_by)
 );
 
+-- Every train station in the corridor, from SBB's open service-point register.
+-- Static geometry, not a cache of anything expensive: it gives the map its
+-- points, and lets a listing with coordinates find its station without an API
+-- call. Keyed by DIDOK number so a rename does not create a duplicate.
+CREATE TABLE IF NOT EXISTS corridor_station (
+    id           INTEGER PRIMARY KEY,
+    name         TEXT NOT NULL,
+    lat          REAL NOT NULL,
+    lon          REAL NOT NULL,
+    municipality TEXT,
+    canton       TEXT,
+    fetched_at   TEXT NOT NULL
+);
+CREATE INDEX IF NOT EXISTS idx_corridor_station_pos ON corridor_station(lat, lon);
+
 CREATE TABLE IF NOT EXISTS station_cache (
     key         TEXT PRIMARY KEY,          -- rounded "lat,lon" or normalized address
     station     TEXT,

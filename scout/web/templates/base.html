@@ -14,6 +14,7 @@
     <nav>
       <a href="/" class="{{ 'on' if nav == 'index' }}">Best fits</a>
       <a href="/?view=shortlist">Shortlist{% if shortlist_count %} ({{ shortlist_count }}){% endif %}</a>
+      <a href="/corridor" class="{{ 'on' if nav == 'corridor' }}">Corridor map</a>
       <a href="/criteria" class="{{ 'on' if nav == 'criteria' }}">Criteria</a>
       <a href="/settings" class="{{ 'on' if nav == 'settings' }}">Settings</a>
       <a href="/runs" class="{{ 'on' if nav == 'runs' }}">Runs</a>

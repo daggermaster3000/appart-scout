@@ -55,9 +55,19 @@ class FakeCommuteService:
 
     def __init__(self, budget_used_per_listing: int = 3) -> None:
         self.api_calls = 0
+        self.searchch_calls = 0
         self.throttled = False
+        self.searchch_throttled = False
         self.calls_per_listing = budget_used_per_listing
         self.order: list[str] = []
+
+    @property
+    def calls(self) -> int:
+        return self.api_calls + self.searchch_calls
+
+    @property
+    def exhausted(self) -> bool:
+        return self.throttled and self.searchch_throttled
 
     async def commutes(self, listing: Listing) -> dict[str, Commute | None]:
         self.api_calls += self.calls_per_listing
@@ -122,16 +132,30 @@ async def test_a_listing_disqualified_by_its_commute_is_dropped_from_kept(db):
     assert stats["dropped"] == 1
 
 
-async def test_throttled_service_stops_pass_two_but_keeps_provisional_scores(db):
+async def test_both_services_throttled_stops_pass_two_but_keeps_provisional_scores(db):
+    with connect() as conn:
+        listing_id = add_listing(conn, "waiting", price=1600)
+        commute = FakeCommuteService()
+        commute.throttled = True
+        commute.searchch_throttled = True
+        kept, stats = await run_rank(conn, commute, max_calls=30)
+
+    assert commute.order == []
+    assert listing_id in kept  # scored on metadata, waiting for next run
+    assert stats["commutes_resolved"] == 0
+
+
+async def test_the_primary_timetable_throttling_alone_does_not_stop_pass_two(db):
+    """opendata.ch giving up is not the end: search.ch answers the same question."""
     with connect() as conn:
         listing_id = add_listing(conn, "waiting", price=1600)
         commute = FakeCommuteService()
         commute.throttled = True
         kept, stats = await run_rank(conn, commute, max_calls=30)
 
-    assert commute.order == []
-    assert listing_id in kept  # scored on metadata, waiting for next run
-    assert stats["commutes_resolved"] == 0
+    assert commute.order == ["waiting"]
+    assert listing_id in kept
+    assert stats["commutes_resolved"] == 1
 
 
 # -- dashboard views ---------------------------------------------------------

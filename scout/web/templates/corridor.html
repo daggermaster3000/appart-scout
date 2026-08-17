@@ -1,0 +1,394 @@
+{% extends "base.html" %}
+{% block title %}Corridor map · Appart-Scout{% endblock %}
+
+{% block content %}
+<h1>Corridor map</h1>
+<p class="sub">
+  Every train station between {{ data.criteria.workplace_a }} and
+  {{ data.criteria.workplace_b }}, coloured by the commute it buys.
+  Stations from SBB's open service-point register; times from the timetable,
+  arriving by {{ data.criteria.arrive_by }} on a weekday.
+</p>
+
+{% if not data.points %}
+  <div class="empty">
+    <p>No stations loaded yet.</p>
+    <form method="post" action="/corridor/fill">
+      <input type="hidden" name="refresh" value="1">
+      <button class="primary">Load stations from SBB</button>
+    </form>
+  </div>
+{% else %}
+
+<div class="cor-bar">
+  <!-- Colour mode. Each is a different question about the same two numbers. -->
+  <div class="seg" role="group" aria-label="Colour by">
+    <button type="button" data-mode="worst" class="on">Worst commute</button>
+    <button type="button" data-mode="a">{{ data.criteria.label_a }}</button>
+    <button type="button" data-mode="b">{{ data.criteria.label_b }}</button>
+    <button type="button" data-mode="fair">Fairness</button>
+  </div>
+  <div class="seg" role="group" aria-label="Granularity">
+    <button type="button" data-group="station" class="on">Stations</button>
+    <button type="button" data-group="commune">Communes</button>
+  </div>
+  <label class="cor-check">
+    <input type="checkbox" id="cor-only-ok"> Only within our limits
+  </label>
+  <!-- Pricing is capped per click on purpose: the timetable API is metered, and
+       every answer is cached, so clicking again continues rather than repeats. -->
+  <div class="cor-fill">
+    <form method="post" action="/corridor/fill">
+      <button class="ghost" {% if data.progress.active %}disabled{% endif %}>
+        Reload stations
+      </button>
+      <input type="hidden" name="refresh" value="1">
+    </form>
+    <form method="post" action="/corridor/fill">
+      <button id="cor-price" {% if data.progress.active %}disabled{% endif %}>
+        {{ 'Pricing…' if data.progress.active else 'Price next batch' }}
+      </button>
+    </form>
+  </div>
+</div>
+
+<p class="cor-status" id="cor-status">
+  <span id="cor-counts">{{ data.resolved }} of {{ data.total }} stations priced</span>
+</p>
+
+<div id="cor-map" class="corridor-map" role="img"
+     aria-label="Map of corridor stations coloured by commute time. The same
+                 numbers are in the table below."></div>
+<div class="cor-legend" id="cor-legend"></div>
+
+<details class="cor-table-wrap">
+  <summary>Table view — the same numbers, without the colour</summary>
+  <table>
+    <thead>
+      <tr>
+        <th>Station</th><th>Commune</th>
+        <th>{{ data.criteria.label_a }}</th>
+        <th>{{ data.criteria.label_b }}</th>
+        <th>Gap</th><th>Total</th>
+      </tr>
+    </thead>
+    <tbody id="cor-tbody"></tbody>
+  </table>
+</details>
+
+<script id="cor-data" type="application/json">{{ map_json | safe }}</script>
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script>
+(function () {
+  "use strict";
+
+  var DATA = JSON.parse(document.getElementById("cor-data").textContent);
+  var C = DATA.criteria;
+
+  /* ---------------------------------------------------------------------
+   * Colour.
+   *
+   * Commute minutes are a magnitude, so they get one hue, light to dark.
+   * Fairness is a polarity - which partner is carrying the longer trip - so
+   * it gets a diverging scale with a neutral grey midpoint, because a zero
+   * gap genuinely means "nothing", not "a little of something".
+   *
+   * Both ramps were validated against the light and dark surfaces (lightness
+   * monotone, visible step gaps, the lightest step still readable against the
+   * surface). The diverging arms land in the colour-vision-deficiency warning
+   * band next to the grey midpoint, so fairness carries a second, non-colour
+   * channel as well: marker radius grows with the size of the gap.
+   * ------------------------------------------------------------------- */
+  var RAMP = {
+    light: {
+      seq:  ["#86b6ef", "#5598e7", "#2a78d6", "#1c5cab", "#0d366b"],
+      div:  ["#8f1f1e", "#d0504e", "#898781", "#2a78d6", "#0d366b"],
+      ring: "#ffffff", pending: "#898781", tiles: "light_all"
+    },
+    dark: {
+      seq:  ["#cde2fb", "#86b6ef", "#3987e5", "#256abf", "#184f95"],
+      div:  ["#c0322f", "#e88b8a", "#898781", "#6da7ec", "#256abf"],
+      ring: "#1a1d23", pending: "#898781", tiles: "dark_all"
+    }
+  };
+
+  // Upper bound of each bucket. Chosen around the commute ceilings rather than
+  // around the data, so the colours mean the same thing after a criteria edit.
+  var SEQ_BREAKS = [20, 30, 40, 55, Infinity];
+  var SEQ_LABELS = ["≤ 20'", "21–30'", "31–40'", "41–55'", "56' +"];
+  // Signed gap, minutes of A minus minutes of B.
+  var DIV_BREAKS = [-25, -10, 10, 25, Infinity];
+  var DIV_LABELS = [
+    C.label_b + " + 25'", C.label_b + " + 10'", "balanced",
+    C.label_a + " + 10'", C.label_a + " + 25'"
+  ];
+
+  function bucket(value, breaks) {
+    for (var i = 0; i < breaks.length; i++) { if (value <= breaks[i]) return i; }
+    return breaks.length - 1;
+  }
+
+  function theme() {
+    return window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
+  }
+
+  /* ---- state ---------------------------------------------------------- */
+
+  var state = { mode: "worst", group: "station", onlyOk: false };
+
+  function metric(point) {
+    if (point.a === null || point.b === null) return null;
+    if (state.mode === "a") return point.a;
+    if (state.mode === "b") return point.b;
+    if (state.mode === "worst") return point.worst;
+    return point.a - point.b;               // fairness: signed, A minus B
+  }
+
+  function colourOf(point, ramp) {
+    var value = metric(point);
+    if (value === null) return ramp.pending;
+    return state.mode === "fair"
+      ? ramp.div[bucket(value, DIV_BREAKS)]
+      : ramp.seq[bucket(value, SEQ_BREAKS)];
+  }
+
+  function radiusOf(point) {
+    if (metric(point) === null) return 3.5;
+    // In fairness mode size is the second channel: the more lopsided a place
+    // is, the bigger its dot, so the reading does not rest on hue alone.
+    if (state.mode === "fair") return 5 + Math.min(6, Math.abs(point.a - point.b) / 7);
+    return 6;
+  }
+
+  /* ---- what gets drawn ------------------------------------------------ */
+
+  function visible() {
+    var points = DATA.points;
+    if (state.onlyOk) {
+      points = points.filter(function (p) { return p.ok; });
+    }
+    if (state.group === "station") return points;
+
+    // One dot per commune, showing its best station - which is the honest
+    // summary, because you would move to the commune and use that station.
+    var best = {};
+    points.forEach(function (p) {
+      var key = p.municipality || p.name;
+      var held = best[key];
+      var rank = p.worst === null ? Infinity : p.worst;
+      if (!held || rank < (held.worst === null ? Infinity : held.worst)) {
+        best[key] = Object.assign({}, p, { label: key, via: p.name });
+      }
+    });
+    return Object.keys(best).map(function (k) { return best[k]; });
+  }
+
+  function tooltip(point) {
+    var name = point.label ? point.label + " · " + point.via : point.name;
+    if (point.a === null || point.b === null) {
+      return "<b>" + esc(name) + "</b><br>not priced yet";
+    }
+    return "<b>" + esc(name) + "</b><br>"
+      + esc(C.label_a) + " " + point.a + "' · " + esc(C.label_b) + " " + point.b + "'<br>"
+      + "gap " + point.gap + "' · total " + point.total + "'"
+      + (point.ok ? "" : "<br><i>outside the commute limits</i>");
+  }
+
+  function esc(text) {
+    return String(text).replace(/[&<>"]/g, function (ch) {
+      return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[ch];
+    });
+  }
+
+  /* ---- map ------------------------------------------------------------ */
+
+  var map = null, layer = null, tiles = null, axis = null;
+
+  function ensureMap() {
+    if (map) return true;
+    if (typeof L === "undefined") {          // no Leaflet: the table still works
+      document.getElementById("cor-map").innerHTML =
+        "<p class='cor-offline'>The map library could not be loaded. " +
+        "The table below has the same numbers.</p>";
+      return false;
+    }
+    map = L.map("cor-map", { scrollWheelZoom: false });
+    map.fitBounds(boundsOfAll(), { padding: [24, 24] });
+    layer = L.layerGroup().addTo(map);
+    paintBasemap();
+    return true;
+  }
+
+  function boundsOfAll() {
+    var latlngs = DATA.points.map(function (p) { return [p.lat, p.lon]; });
+    ["a", "b"].forEach(function (leg) {
+      var anchor = DATA.anchors[leg];
+      if (anchor) latlngs.push([anchor.lat, anchor.lon]);
+    });
+    return L.latLngBounds(latlngs);
+  }
+
+  function paintBasemap() {
+    if (tiles) map.removeLayer(tiles);
+    tiles = L.tileLayer(
+      "https://{s}.basemaps.cartocdn.com/" + RAMP[theme()].tiles + "/{z}/{x}/{y}{r}.png",
+      {
+        maxZoom: 16,
+        attribution: "&copy; OpenStreetMap &copy; CARTO · stations &copy; SBB open data"
+      }
+    ).addTo(map);
+    tiles.bringToBack();
+  }
+
+  function draw() {
+    if (!ensureMap()) { drawTable(); return; }
+    var ramp = RAMP[theme()];
+    layer.clearLayers();
+
+    // The workplace-to-workplace line, so the corridor reads as a corridor.
+    if (DATA.anchors.a && DATA.anchors.b) {
+      L.polyline(
+        [[DATA.anchors.a.lat, DATA.anchors.a.lon], [DATA.anchors.b.lat, DATA.anchors.b.lon]],
+        { color: ramp.pending, weight: 2, opacity: .5, dashArray: "6 6" }
+      ).addTo(layer);
+    }
+
+    visible().forEach(function (point) {
+      L.circleMarker([point.lat, point.lon], {
+        radius: radiusOf(point),
+        fillColor: colourOf(point, ramp),
+        fillOpacity: metric(point) === null ? .55 : 1,
+        // A ring in the surface colour keeps two overlapping stations legible.
+        color: ramp.ring,
+        weight: 2
+      }).bindTooltip(tooltip(point), { direction: "top" }).addTo(layer);
+    });
+
+    // The two workplaces are always labelled outright - they are the only
+    // points on this map whose identity must never depend on a hover.
+    ["a", "b"].forEach(function (leg) {
+      var anchor = DATA.anchors[leg];
+      if (!anchor) return;
+      L.marker([anchor.lat, anchor.lon], {
+        icon: L.divIcon({
+          className: "cor-anchor",
+          html: "<span>" + esc(leg === "a" ? C.label_a : C.label_b) + " · "
+                + esc(anchor.name) + "</span>",
+          iconSize: null
+        })
+      }).addTo(layer);
+    });
+
+    drawLegend();
+    drawTable();
+  }
+
+  /* ---- legend and table ----------------------------------------------- */
+
+  function drawLegend() {
+    var ramp = RAMP[theme()];
+    var steps = state.mode === "fair" ? ramp.div : ramp.seq;
+    var labels = state.mode === "fair" ? DIV_LABELS : SEQ_LABELS;
+    var title = state.mode === "fair"
+      ? "Who travels longer"
+      : (state.mode === "a" ? C.label_a
+        : state.mode === "b" ? C.label_b : "The longer of the two") + " — door-to-station";
+
+    var html = "<span class='cor-legend-title'>" + esc(title) + "</span>";
+    steps.forEach(function (colour, i) {
+      html += "<span class='cor-key'><i style='background:" + colour + "'></i>"
+            + esc(labels[i]) + "</span>";
+    });
+    html += "<span class='cor-key'><i class='cor-pending' style='background:"
+          + ramp.pending + "'></i>not priced yet</span>";
+    document.getElementById("cor-legend").innerHTML = html;
+  }
+
+  function drawTable() {
+    var rows = visible().slice().sort(function (x, y) {
+      return (x.worst === null ? 1e9 : x.worst) - (y.worst === null ? 1e9 : y.worst);
+    });
+    document.getElementById("cor-tbody").innerHTML = rows.map(function (p) {
+      var dash = "—";
+      return "<tr><td>" + esc(p.via || p.name) + "</td><td>" + esc(p.municipality) + "</td>"
+        + "<td>" + (p.a === null ? dash : p.a + "'") + "</td>"
+        + "<td>" + (p.b === null ? dash : p.b + "'") + "</td>"
+        + "<td>" + (p.gap === null ? dash : p.gap + "'") + "</td>"
+        + "<td>" + (p.total === null ? dash : p.total + "'") + "</td></tr>";
+    }).join("");
+  }
+
+  /* ---- controls ------------------------------------------------------- */
+
+  document.querySelectorAll("[data-mode]").forEach(function (button) {
+    button.addEventListener("click", function () {
+      state.mode = button.dataset.mode;
+      setActive("[data-mode]", button);
+      draw();
+    });
+  });
+  document.querySelectorAll("[data-group]").forEach(function (button) {
+    button.addEventListener("click", function () {
+      state.group = button.dataset.group;
+      setActive("[data-group]", button);
+      draw();
+    });
+  });
+  document.getElementById("cor-only-ok").addEventListener("change", function (event) {
+    state.onlyOk = event.target.checked;
+    draw();
+  });
+
+  function setActive(selector, active) {
+    document.querySelectorAll(selector).forEach(function (button) {
+      button.classList.toggle("on", button === active);
+    });
+  }
+
+  window.matchMedia("(prefers-color-scheme: dark)").addEventListener("change", function () {
+    if (map) paintBasemap();
+    draw();
+  });
+
+  /* ---- filling in ------------------------------------------------------
+   * Pricing a batch takes minutes, so the page polls instead of reloading -
+   * stations appear on the map as they resolve, and the view, zoom and mode
+   * the user chose all survive.
+   * -------------------------------------------------------------------- */
+
+  function poll() {
+    fetch("/api/corridor", { headers: { "Accept": "application/json" } })
+      .then(function (response) { return response.json(); })
+      .then(function (fresh) {
+        DATA.points = fresh.points;
+        DATA.anchors = fresh.anchors;
+        var progress = fresh.progress || {};
+        var counts = fresh.resolved + " of " + fresh.total + " stations priced";
+        if (fresh.busy) {
+          counts += " · pricing " + (progress.done || 0)
+                  + "/" + (progress.total || 0)
+                  + (progress.note ? " · " + progress.note : "");
+        } else if (progress.note) {
+          counts += " · " + progress.note;
+        }
+        document.getElementById("cor-counts").textContent = counts;
+        draw();
+        if (fresh.busy) {
+          setTimeout(poll, 4000);
+          return;
+        }
+        document.querySelectorAll(".cor-fill button").forEach(function (button) {
+          button.disabled = false;
+        });
+        document.getElementById("cor-price").textContent = "Price next batch";
+      })
+      .catch(function () { /* a dropped poll is not worth interrupting anyone over */ });
+  }
+
+  draw();
+  if ({{ 'true' if data.progress.active else 'false' }}) setTimeout(poll, 2000);
+})();
+</script>
+{% endif %}
+{% endblock %}

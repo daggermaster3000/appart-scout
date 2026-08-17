@@ -259,6 +259,12 @@ class Settings(BaseModel):
     # to fill in over the first day rather than the first run.
     max_commute_calls_per_run: int = 150
 
+    # The corridor map prices whole stations rather than listings, two timetable
+    # calls each, so one click is deliberately a batch rather than the whole
+    # corridor: ~350 stations would be ~700 calls and several throttled minutes.
+    # Every answer is cached, so clicking again continues instead of repeating.
+    corridor_batch_size: int = 60
+
 
 class VisionResult(BaseModel):
     score: int = 0  # 0-100
